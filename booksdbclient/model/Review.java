@@ -1,0 +1,29 @@
+package booksdbclient.model;
+
+public class Review {
+
+    private String review;
+    private float rating;
+    
+    public Review(String review,float rating) {
+        this.review = review;
+        this.rating = rating;
+    }
+
+    public float getRating() {
+    	return rating;
+    }
+    public String getReview() {
+        return review;
+    }
+    @Override
+    public String toString() {
+    	StringBuilder builder = new StringBuilder().append(System.getProperty("line.separator"));
+    	builder.append("Rating: ").append(this.rating).append(System.getProperty("line.separator"));
+    	builder.append("Review: ").append(this.review).append(System.getProperty("line.separator"));
+    	return builder.toString();
+    }
+    public void setReview(String review) {
+        this.review = review;
+    }
+}
