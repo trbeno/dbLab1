@@ -11,7 +11,7 @@ public class AuthorInserter implements Runnable {
 	
 	@Override
 	public void run() {
-		String selectAuthorSQL ="INSERT INTO t_author(name) values(?)";
+		String selectAuthorSQL ="INSERT INTO T_Author(name) values(?)";
         try {
 		PreparedStatement preStmt = con.prepareStatement(selectAuthorSQL);
         preStmt.clearParameters();

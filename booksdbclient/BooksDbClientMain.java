@@ -1,6 +1,6 @@
 package booksdbclient;
 
-import booksdbclient.model.MockBooksDb;
+import booksdbclient.model.MySQL;
 import booksdbclient.view.BooksPane;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -16,8 +16,7 @@ public class BooksDbClientMain extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        MockBooksDb booksDb = new MockBooksDb(); // model
-        // Don't forget to connect to the db, somewhere...
+        MySQL booksDb = new MySQL(); // model
 
         BooksPane root = new BooksPane(booksDb);
 

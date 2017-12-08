@@ -2,7 +2,7 @@ package booksdbclient.view;
 
 import booksdbclient.model.SearchMode;
 import booksdbclient.model.Book;
-import booksdbclient.model.MockBooksDb;
+import booksdbclient.model.MySQL;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -50,7 +50,7 @@ public class BooksPane extends VBox {
     private Button searchButton;
     private MenuBar menuBar;
 
-    public BooksPane(MockBooksDb booksDb) {
+    public BooksPane(MySQL booksDb) {
         final Controller controller = new Controller(booksDb, this);
         this.init(controller);
     }

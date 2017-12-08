@@ -54,8 +54,10 @@ public class Controller {
 		                        break;
 		                    case Rating:
 		                        result = booksDb.searchBooksByRating(searchFor);
+		                        break;
 		                    case Genre:
 		                    	result = booksDb.searchBooksByGenre(searchFor);
+		                    	break;
 		                    default:
 		                }
 		                if (result == null || result.isEmpty()) {
@@ -68,14 +70,17 @@ public class Controller {
 		                booksView.showAlertAndWait(
 		                        "Enter a search string!", WARNING);
 		            }
-		        } catch (Exception e) {
-		            booksView.showAlertAndWait("Database error.",ERROR);
-		        }
+		        } catch (SQLException|IOException e) {
+		            booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+		        }catch(NullPointerException e) {
+		        	booksView.showAlertAndWait("Database error. No connecton to database",ERROR);
+			 	}
+			 	
 		}	
     }
     
     public void onConnectSelected() throws IOException, SQLException {
-    	booksDb.connect("Library", "root", "terror123");
+    	booksDb.connect("Library", "dbUser", "terror");
     }
     public void onDisconnectSelected() throws IOException, SQLException {
     	booksDb.disconnect();
@@ -91,7 +96,7 @@ public class Controller {
         booksView.ratingWindow(this);
     }
     public void oneNewRatingSubmit(String isbn, String userID, String rating, String reviwe) throws IOException, SQLException{
-        booksDb.addRating(isbn, userID, rating, reviwe);
+        booksDb.addReview(isbn, userID, rating, reviwe);
     }
     public void onNewBookSelected() {
     	booksView.newBookWindow(this);
