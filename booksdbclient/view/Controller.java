@@ -283,21 +283,43 @@ public class Controller {
 	}
 	
 	private class LogInManeger implements Runnable {
-
-		private String userName, password;
+		private String username, password;
 		public LogInManeger(String username, String password) {
-			this.userName = username;
+			this.username = username;
 			this.password = password;
 		}
 		@Override
 		public void run() {
 			try {
-				booksDb.loginAttempt(userName,password);
+				Boolean failOrAAccepted = booksDb.loginAttempt(username,password);
+				if(!failOrAAccepted) {
+					Platform.runLater(new Runnable() {
+	            	    @Override
+	            	    public void run() {
+	            	    	booksView.showAlertAndWait("Wrong username/passorw try again",ERROR);
+	            	    }
+	            	});
+				}
+				else {
+					Platform.runLater(new Runnable() {
+	            	    @Override
+	            	    public void run() {
+	            	    	booksView.showAlertAndWait("Login Success!",INFORMATION);
+	            	    }
+	            	});
+				}
 			} catch (IOException | SQLException e) {
 				Platform.runLater(new Runnable() {
             	    @Override
             	    public void run() {
             	    	booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+            	    }
+            	});
+			}catch(NullPointerException e) {
+				Platform.runLater(new Runnable() {
+            	    @Override
+            	    public void run() {
+            	    	booksView.showAlertAndWait("Not Connected to the database",ERROR);
             	    }
             	});
 			}
@@ -307,9 +329,7 @@ public class Controller {
     	booksView.logInWindow(this);
 	}
 	public void onLogInSubmit(String username, String password) throws IOException, SQLException{
-		Boolean failOrAAccepted = booksDb.loginAttempt(username,password);
-
-		if(failOrAAccepted) booksView.showAlertAndWait("Welcome! ",INFORMATION);
-		else booksView.showAlertAndWait("No user Found",ERROR);
+		Thread thread = new Thread(new LogInManeger(username, password));
+		thread.start();
 	}
 }
