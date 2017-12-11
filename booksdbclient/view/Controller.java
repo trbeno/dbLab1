@@ -1,10 +1,10 @@
 package booksdbclient.view;
 
 import booksdbclient.model.SearchMode;
-import javafx.application.Platform;
 import booksdbclient.model.Book;
 import booksdbclient.model.BooksDbInterface;
 
+import javafx.application.Platform;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -26,7 +26,7 @@ public class Controller {
         this.booksDb = booksDb;
         this.booksView = booksView;
     }
-    
+
     private class DisplayResult implements Runnable {
     	private List<Book> result=null;
     	public DisplayResult(List<Book> result) {
@@ -35,9 +35,9 @@ public class Controller {
 		@Override
 		public void run() {
 			booksView.displayBooks(result);
-			
+
 		}
-    	
+
     }
     protected void onSearchSelected(String searchFor, SearchMode mode) {
        Thread thread = new Thread(new Searcher(searchFor,mode));
@@ -292,12 +292,35 @@ public class Controller {
 		@Override
 		public void run() {
 			try {
-				booksDb.loginAttempt(userName,password);
+				Boolean failOrAAccepted = booksDb.loginAttempt(username,password);
+				if(!failOrAAccepted) {
+					Platform.runLater(new Runnable() {
+	            	    @Override
+	            	    public void run() {
+	            	    	booksView.showAlertAndWait("Wrong username/passorw try again",ERROR);
+	            	    }
+	            	});
+				}
+				else {
+					Platform.runLater(new Runnable() {
+	            	    @Override
+	            	    public void run() {
+	            	    	booksView.showAlertAndWait("Login Success!",INFORMATION);
+	            	    }
+	            	});
+				}
 			} catch (IOException | SQLException e) {
 				Platform.runLater(new Runnable() {
             	    @Override
             	    public void run() {
             	    	booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+            	    }
+            	});
+			}catch(NullPointerException e) {
+				Platform.runLater(new Runnable() {
+            	    @Override
+            	    public void run() {
+            	    	booksView.showAlertAndWait("Not Connected to the database",ERROR);
             	    }
             	});
 			}
@@ -307,7 +330,7 @@ public class Controller {
     	booksView.logInWindow(this);
 	}
 	public void onLogInSubmit(String username, String password) throws IOException, SQLException{
-		Thread thread = new Thread(new LogInManeger(username,password));
+		Thread thread = new Thread(new LogInManeger(username, password));
 		thread.start();
 	}
 }
