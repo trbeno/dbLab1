@@ -107,7 +107,7 @@ public class MySQL implements BooksDbInterface {
         ResultSet rs;
 
         try {
-            String selectSQL ="SELECT * FROM t_book WHERE isbn like ?";
+            String selectSQL ="SELECT * FROM T_Book WHERE isbn like ?";
             preStmt = con.prepareStatement(selectSQL);
             preStmt.clearParameters();
             preStmt.setString(1,'%'+searchISBN+'%');
@@ -150,7 +150,7 @@ public class MySQL implements BooksDbInterface {
 
 
         try {
-            String selectAuthorSQL ="SELECT * FROM t_author WHERE name like ?";
+            String selectAuthorSQL ="SELECT * FROM T_Author WHERE name like ?";
             preStmt = con.prepareStatement(selectAuthorSQL);
             preStmt.clearParameters();
             preStmt.setString(1,'%'+searchAuthor+'%');
@@ -163,7 +163,7 @@ public class MySQL implements BooksDbInterface {
                 Author author = new Author(name);
                 authors.add(author);
 
-                String selectBooksSQL ="SELECT * FROM t_book INNER JOIN t_made ON t_book.isbn = t_made.isbn WHERE T_made.authorID = ?";
+                String selectBooksSQL ="SELECT * FROM T_Book INNER JOIN T_Made ON T_Book.isbn = T_Made.isbn WHERE T_Made.authorID = ?";
                 booksPreStmt = con.prepareStatement(selectBooksSQL);
                 booksPreStmt.clearParameters();
                 booksPreStmt.setString(1,authorID);
@@ -223,7 +223,7 @@ public class MySQL implements BooksDbInterface {
                 String isbn = rs.getString("isbn");
                 float foundRating = getAvgRating(isbn);
 
-                String selectSQL = "SELECT * FROM t_book WHERE isbn like ?";
+                String selectSQL = "SELECT * FROM T_Book WHERE isbn like ?";
                 getBooksStmt = con.prepareStatement(selectSQL);
                 getBooksStmt.clearParameters();
                 getBooksStmt.setString(1, isbn);
@@ -288,6 +288,7 @@ public class MySQL implements BooksDbInterface {
         }
         finally {
             preStmt.close();
+
         }
         return result;
     }
@@ -307,7 +308,7 @@ public class MySQL implements BooksDbInterface {
 
         try {
             String selectAuthorSQL =
-                    "SELECT name FROM t_author INNER JOIN t_made ON t_author.authorID = t_made.authorID WHERE isbn = ?";
+                    "SELECT name FROM T_Author INNER JOIN T_Made ON T_Author.authorID = T_Made.authorID WHERE isbn = ?";
             authorPreStmt = con.prepareStatement(selectAuthorSQL);
             authorPreStmt.clearParameters();
             authorPreStmt.setString(1, isbn);
@@ -414,7 +415,7 @@ public class MySQL implements BooksDbInterface {
     	ResultSet authorRs;
     	try {
     		con.setAutoCommit(false);
-	        String insertBook = "INSERT INTO T_Book VALUES(?,?,?,?)";
+	        String insertBook = "INSERT INTO T_Book VALUES(?,?,?,?)";	
 	        bookPreStmt = con.prepareStatement(insertBook);
 	        bookPreStmt.clearParameters();
 	        bookPreStmt.setString(1, isbn);
@@ -480,7 +481,7 @@ public class MySQL implements BooksDbInterface {
 
     @Override
     public void addCustomer(String name, String address, String userName, String password) throws IOException, SQLException {
-        String inputReviewSQL ="INSERT INTO t_customer(name,address, userName, password) VALUES (?, ? ,?,?) ";
+        String inputReviewSQL ="INSERT INTO T_Customer(name,address, userName, password) VALUES (?, ? ,?,?) ";
         PreparedStatement preStmt = con.prepareStatement(inputReviewSQL);
         try {
             preStmt.clearParameters();
@@ -494,17 +495,18 @@ public class MySQL implements BooksDbInterface {
             preStmt.close();
         }
     }
+    
 
     @Override
     public void removeBookByIsbn(String isbn) throws IOException, SQLException {
 
-        String removeRequest = "DELETE FROM t_book WHERE isbn = ?";
+        String removeRequest = "DELETE FROM T_Book WHERE isbn = ?";
         PreparedStatement removeStmt = con.prepareStatement(removeRequest);
         try {
             removeStmt.clearParameters();
             removeStmt.setString(1,isbn);
             removeStmt.executeUpdate();
-            String removeFromMadeRequest = "DELETE FROM t_made WHERE isbn = ?";
+            String removeFromMadeRequest = "DELETE FROM T_Made WHERE isbn = ?";
             removeStmt = con.prepareStatement(removeFromMadeRequest);
             removeStmt.clearParameters();
             removeStmt.setString(1,isbn);
@@ -521,7 +523,7 @@ public class MySQL implements BooksDbInterface {
 
         boolean failOrAccept = false;
         String loginQuestion =
-                "SELECT customerId, name, address, userName, password FROM t_customer WHERE username = ? AND password = ?";
+                "SELECT customerId, name, address, userName, password FROM T_Customer WHERE username = ? AND password = ?";
         PreparedStatement preStmt = con.prepareStatement(loginQuestion);
         try{
             preStmt.clearParameters();
