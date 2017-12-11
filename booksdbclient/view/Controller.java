@@ -30,7 +30,7 @@ public class Controller {
        thread.start();
     }
     private class Searcher implements Runnable {
-		
+
 		private String searchFor;
 		private SearchMode mode;
 		public Searcher(String searchFor, SearchMode mode) {
@@ -76,9 +76,9 @@ public class Controller {
 		        catch(NullPointerException e) {
 		        	booksView.showAlertAndWait("Database error. No connection to database",ERROR);
 			 	}
-		}	
+		}
     }
-    
+
     public void onConnectSelected() throws IOException, SQLException {
     	booksDb.connect("Library", "dbUser", "terror");
     }
@@ -89,7 +89,7 @@ public class Controller {
     	booksView.newAuthorWindow(this);
     }
 	private class AuthorInserter implements Runnable {
-			
+
 			private String authorName;
 			public AuthorInserter(String authorName) {
 				this.authorName=authorName;
@@ -108,13 +108,13 @@ public class Controller {
     		Thread thread = new Thread(new AuthorInserter(authorName));
     		thread.start();
     	}
-    		
+
     }
     public void onRateSelected() {
         booksView.ratingWindow(this);
     }
     private class ReviewInserter implements Runnable {
-		
+
 		private String isbn, userID, rating, review;
 		public ReviewInserter(String isbn, String userID, String rating, String review) {
 			this.isbn = isbn;
@@ -139,7 +139,7 @@ public class Controller {
     	booksView.newBookWindow(this);
     }
     private class BookInserter implements Runnable {
-		
+
 		private String isbn, genre, title, authors;
 		public BookInserter(String isbn,String genre, String title,String authors) {
 			this.isbn = isbn;
@@ -164,5 +164,17 @@ public class Controller {
     public void onRowSelect(Book book){
     	booksView.displayReviews(book);
     }
-    
+
+    public void onSignupSelect(){
+    	booksView.newCustomerWindow(this);
+	}
+	public void onNewCustomerSubmit(String name, String address, String username, String password) throws IOException, SQLException{
+    	booksDb.addCustomer(name,address,username,password);
+	}
+	public void onLogInSelect(){
+    	booksView.logInWindow(this);
+	}
+	public void onLogInSubmit(String username, String password) throws IOException, SQLException{
+		booksDb.loginAttempt(username,password);
+	}
 }

@@ -212,7 +212,6 @@ public class BooksPane extends VBox {
                 controller.newAuthorWindow();
             }
         });
-
         rateItem.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
                 try {
@@ -223,12 +222,28 @@ public class BooksPane extends VBox {
 
         manageMenu.getItems().addAll(addItem, removeItem, updateItem,rateItem,addAuthorItem);
 
-        Menu accoutMenu = new Menu("Accout");
-        MenuItem signinItem = new MenuItem("Sing Up");
+        Menu accoutMenu = new Menu("Account");
+        MenuItem signupItem = new MenuItem("Sign Up");
+        signupItem.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent t) {
+                try {
+                    controller.onSignupSelect();
+                } catch (Exception e) {}
+            }
+        });
+
         MenuItem loginItem = new MenuItem("Log In");
+        loginItem.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent t) {
+                try {
+                    controller.onLogInSelect();
+                } catch (Exception e) {}
+            }
+        });
+
         MenuItem logout = new MenuItem("Log Out");
 
-        accoutMenu.getItems().addAll(signinItem,loginItem,logout);
+        accoutMenu.getItems().addAll(signupItem,loginItem,logout);
 
         menuBar = new MenuBar();
         menuBar.getMenus().addAll(fileMenu, searchMenu, manageMenu,accoutMenu);
@@ -383,5 +398,80 @@ public class BooksPane extends VBox {
         dialog.setScene(dialogScene);
         dialog.show();
     }
-   
+
+    public void newCustomerWindow(Controller controller){
+        final Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        VBox dialogVbox = new VBox(20);
+
+        final TextField nameField = new TextField();
+        final Label nameLabel = new Label("Enter Name:");
+
+        final TextField addressField = new TextField();
+        final Label adressLabel = new Label("Enter address:");
+
+        final TextField usernameField = new TextField();
+        final Label usernameLabel = new Label("Enter Username:");
+
+        final TextField passwordField = new TextField();
+        final Label passwordLabel = new Label("Enter Password:");
+
+        Button submitBtn = new Button();
+        submitBtn.setText("Submit");
+        submitBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    String customerName = nameField.getText();
+                    String customerAdress = addressField.getText();
+                    String customerUsername = usernameField.getText();
+                    String customerPassword = passwordField.getText();
+                    controller.onNewCustomerSubmit(customerName,customerAdress,customerUsername,customerPassword);
+                    dialog.close();
+                } catch (IOException | SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        dialogVbox.getChildren().addAll(nameLabel,nameField,adressLabel,addressField,usernameLabel,usernameField,passwordLabel,passwordField,submitBtn);
+        Scene dialogScene = new Scene(dialogVbox, 300, 400);
+        dialog.setScene(dialogScene);
+        dialog.show();
+    }
+
+    public void logInWindow(Controller controller){
+        final Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        VBox dialogVbox = new VBox(20);
+
+        final TextField usernameField = new TextField();
+        final Label usernameLabel = new Label("Enter Username:");
+
+        final TextField passwordField = new TextField();
+        final Label passwordLabel = new Label("Enter Password:");
+
+        Button submitBtn = new Button();
+        submitBtn.setText("Submit");
+        submitBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    String customerUsername = usernameField.getText();
+                    String customerPassword = passwordField.getText();
+                    controller.onLogInSubmit(customerUsername,customerPassword);
+                    dialog.close();
+                } catch (IOException | SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        });
+        dialogVbox.getChildren().addAll(usernameLabel,usernameField,passwordLabel,passwordField,submitBtn);
+        Scene dialogScene = new Scene(dialogVbox, 300, 200);
+        dialog.setScene(dialogScene);
+        dialog.show();
+    }
 }
+
