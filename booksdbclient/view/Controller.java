@@ -1,6 +1,7 @@
 package booksdbclient.view;
 
 import booksdbclient.model.SearchMode;
+import javafx.application.Platform;
 import booksdbclient.model.Book;
 import booksdbclient.model.BooksDbInterface;
 
@@ -24,6 +25,19 @@ public class Controller {
     public Controller(BooksDbInterface booksDb, BooksPane booksView) {
         this.booksDb = booksDb;
         this.booksView = booksView;
+    }
+    
+    private class DisplayResult implements Runnable {
+    	private List<Book> result=null;
+    	public DisplayResult(List<Book> result) {
+    		this.result=result;
+    	}
+		@Override
+		public void run() {
+			booksView.displayBooks(result);
+			
+		}
+    	
     }
     protected void onSearchSelected(String searchFor, SearchMode mode) {
        Thread thread = new Thread(new Searcher(searchFor,mode));
@@ -61,20 +75,39 @@ public class Controller {
 		                    default:
 		                }
 		                if (result == null || result.isEmpty()) {
-		                    booksView.showAlertAndWait(
-		                            "No results found.", INFORMATION);
+		                	Platform.runLater(new Runnable() {
+		                	    @Override
+		                	    public void run() {
+		                	    	booksView.showAlertAndWait("No results found.", INFORMATION);
+		                	    }
+		                	});
 		                } else {
-		                    booksView.displayBooks(result);
+		                    Platform.runLater(new DisplayResult(result));
 		                }
 		            } else {
-		                booksView.showAlertAndWait(
-		                        "Enter a search string!", WARNING);
+		            	Platform.runLater(new Runnable() {
+	                	    @Override
+	                	    public void run() {
+	                	    	booksView.showAlertAndWait(
+	    		                        "Enter a search string!", WARNING);
+	                	    }
+	                	});
 		            }
 		        } catch (SQLException|IOException e) {
-		            booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+		        	Platform.runLater(new Runnable() {
+                	    @Override
+                	    public void run() {
+                	    	booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+                	    }
+                	});
 		        }
 		        catch(NullPointerException e) {
-		        	booksView.showAlertAndWait("Database error. No connection to database",ERROR);
+		        	Platform.runLater(new Runnable() {
+                	    @Override
+                	    public void run() {
+                	    	booksView.showAlertAndWait("Database error. No connection to database",ERROR);
+                	    }
+                	});
 			 	}
 		}
     }
@@ -87,7 +120,12 @@ public class Controller {
 			try {
 				booksDb.connect("Library", "dbUser", "terror");
 			} catch (IOException | SQLException e) {
-				booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+				Platform.runLater(new Runnable() {
+            	    @Override
+            	    public void run() {
+            	    	booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+            	    }
+            	});
 			}
 		}
     }
@@ -104,7 +142,12 @@ public class Controller {
 			try {
 				booksDb.disconnect();
 			} catch (IOException | SQLException e) {
-				booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+				Platform.runLater(new Runnable() {
+            	    @Override
+            	    public void run() {
+            	    	booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+            	    }
+            	});
 			}
 		}
     }
@@ -127,7 +170,12 @@ public class Controller {
 				try {
 					booksDb.insertNewAuthor(authorName);
 				} catch (IOException | SQLException e) {
-					booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+					Platform.runLater(new Runnable() {
+	            	    @Override
+	            	    public void run() {
+	            	    	booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+	            	    }
+	            	});
 				}
 			}
 	 }
@@ -155,7 +203,12 @@ public class Controller {
 			try {
 				booksDb.addReview(userID, isbn, rating, review);
 			} catch (IOException | SQLException e) {
-				booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+				Platform.runLater(new Runnable() {
+            	    @Override
+            	    public void run() {
+            	    	booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+            	    }
+            	});
 			}
 		}
     }
@@ -180,7 +233,12 @@ public class Controller {
 			try {
 				booksDb.addReview(isbn, genre, title, authors);
 			} catch (IOException | SQLException e) {
-				booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+				Platform.runLater(new Runnable() {
+            	    @Override
+            	    public void run() {
+            	    	booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+            	    }
+            	});
 			}
 		}
     }
@@ -210,7 +268,12 @@ public class Controller {
 			try {
 				booksDb.addCustomer(name, address, userName, password);
 			} catch (IOException | SQLException e) {
-				booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+				Platform.runLater(new Runnable() {
+            	    @Override
+            	    public void run() {
+            	    	booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+            	    }
+            	});
 			}
 		}
     }
@@ -231,7 +294,12 @@ public class Controller {
 			try {
 				booksDb.loginAttempt(userName,password);
 			} catch (IOException | SQLException e) {
-				booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+				Platform.runLater(new Runnable() {
+            	    @Override
+            	    public void run() {
+            	    	booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+            	    }
+            	});
 			}
 		}
     }
