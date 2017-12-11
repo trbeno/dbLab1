@@ -164,4 +164,16 @@ public class Controller {
     	booksView.displayReviews(book);
     }
 
+    public void onSignupSelect(){
+    	booksView.newCustomerWindow(this);
+	}
+	public void onNewCustomerSubmit(String name, String address, String username, String password) throws IOException, SQLException{
+    	booksDb.addCustomer(name,address,username,password);
+	}
+	public void onLogInSelect(){
+    	booksView.logInWindow(this);
+	}
+	public void onLogInSubmit(String username, String password) throws IOException, SQLException{
+		booksDb.loginAttempt(username,password);
+	}
 }
