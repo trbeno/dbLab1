@@ -26,8 +26,8 @@ public class Controller {
         this.booksView = booksView;
     }
     protected void onSearchSelected(String searchFor, SearchMode mode) {
-       Searcher searchJob = new Searcher(searchFor,mode);
-       searchJob.run();
+       Thread thread = new Thread(new Searcher(searchFor,mode));
+       thread.start();
     }
     private class Searcher implements Runnable {
 		
@@ -105,8 +105,8 @@ public class Controller {
 	 }
     public void onNewAuthorSubmit(String authorName) throws IOException, SQLException{
     	if(!"".equals(authorName)) {
-    		AuthorInserter inserterJob = new AuthorInserter(authorName);
-    		inserterJob.run();
+    		Thread thread = new Thread(new AuthorInserter(authorName));
+    		thread.start();
     	}
     		
     }
@@ -132,8 +132,8 @@ public class Controller {
 		}
     }
     public void oneNewRatingSubmit(String isbn, String userID, String rating, String review) throws IOException, SQLException{
-        ReviewInserter reviewJob = new ReviewInserter(isbn,userID,rating,review);
-        reviewJob.run();
+        Thread thread = new Thread(new ReviewInserter(isbn,userID,rating,review));
+		thread.start();
     }
     public void onNewBookSelected() {
     	booksView.newBookWindow(this);
@@ -157,8 +157,9 @@ public class Controller {
 		}
     }
     public void onNewBookSubmit(String isbn,String genre, String title,String authors) throws IOException, SQLException{
-    	BookInserter inserterJob = new BookInserter(isbn, genre, title, authors);
-    	inserterJob.run();
+    	Thread thread = new Thread(new BookInserter(isbn, genre, title, authors));
+		thread.start();
+    	
     }
     public void onRowSelect(Book book){
     	booksView.displayReviews(book);
