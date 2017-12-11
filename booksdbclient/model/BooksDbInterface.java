@@ -70,8 +70,29 @@ public interface BooksDbInterface {
      * @param userID, isbn, rating, text
      */
     public void addReview( String isbn, String rating, String text) throws IOException, SQLException;
+    /**
+     * Removes a book that matches an isbn number
+     * @param  isbn: the isbn number to be used
+     */
     public void removeBookByIsbn(String isbn) throws IOException, SQLException;
+    /**
+     * Function to add a customer to the database, equivalent to signup or similar
+     * @param name
+     * @param address
+     * @param userName
+     * @param password
+     * @throws IOException
+     * @throws SQLException
+     */
     public void addCustomer (String name, String address, String userName, String password) throws IOException, SQLException;
+    /**
+     * Function that logs into an account. 
+     * @param userName
+     * @param password
+     * @return true on Success
+     * @throws IOException
+     * @throws SQLException
+     */
     public boolean loginAttempt (String userName, String password) throws IOException, SQLException;
 
 }
