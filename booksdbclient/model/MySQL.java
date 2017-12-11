@@ -463,13 +463,51 @@ public class MySQL implements BooksDbInterface {
 	            pre2Stmt.setString(4,text);
 	            pre2Stmt.executeUpdate();
 	        }
-    	 catch (SQLException e) {
-	         con.rollback();
-	         throw e;
-    	 }
     	 finally{
     		 pre2Stmt.close();
     	 }
-    
+    }
+
+    @Override
+    public void addCustomer(String name, String address, String userName, String password) throws IOException, SQLException {
+        String inputReviewSQL ="INSERT INTO t_customer(name,address, userName, password) VALUES (?, ? ,?,?) ";
+        PreparedStatement preStmt = con.prepareStatement(inputReviewSQL);
+        try {
+            preStmt.clearParameters();
+            preStmt.setString(1,name);
+            preStmt.setString(2,address);
+            preStmt.setString(3, userName);
+            preStmt.setString(4,password);
+            preStmt.executeUpdate();
+        }
+        finally{
+            preStmt.close();
+        }
+    }
+
+    @Override
+    public void loginAttempt(String username, String password) throws IOException, SQLException {
+        String loginQuestion =
+                "SELECT customerId, name, address, userName, password FROM t_customer WHERE username = ? AND password = ?";
+        PreparedStatement preStmt = con.prepareStatement(loginQuestion);
+        try{
+            preStmt.clearParameters();
+            preStmt.setString(1,username);
+            preStmt.setString(2,password);
+           ResultSet rs =  preStmt.executeQuery();
+           while (rs.next()){
+               int customerId = rs.getInt("customerID");
+               String name = rs.getString("name");
+               String address = rs.getString("address");
+               String userName = rs.getString("userName");
+               String passWord = rs.getString("password");
+
+               Customer customer = new Customer(customerId,name,address,userName,passWord);
+           }
+
+        }
+        finally{
+            preStmt.close();
+        }
     }
 }
