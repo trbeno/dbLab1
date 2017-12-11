@@ -79,15 +79,43 @@ public class Controller {
 		}
     }
 
+    private class Connecter implements Runnable {
+		public Connecter() {
+		}
+		@Override
+		public void run() {
+			try {
+				booksDb.connect("Library", "dbUser", "terror");
+			} catch (IOException | SQLException e) {
+				booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+			}
+		}
+    }
     public void onConnectSelected() throws IOException, SQLException {
-    	booksDb.connect("Library", "dbUser", "terror");
+    	Thread thread = new Thread(new Connecter());
+    	thread.start();
+    }
+    
+    private class DisConnecter implements Runnable {
+		public DisConnecter() {
+		}
+		@Override
+		public void run() {
+			try {
+				booksDb.disconnect();
+			} catch (IOException | SQLException e) {
+				booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+			}
+		}
     }
     public void onDisconnectSelected() throws IOException, SQLException {
-    	booksDb.disconnect();
+    	Thread thread = new Thread(new DisConnecter());
+    	thread.start();
     }
     public void newAuthorWindow() {
     	booksView.newAuthorWindow(this);
     }
+    
 	private class AuthorInserter implements Runnable {
 
 			private String authorName;
@@ -168,13 +196,50 @@ public class Controller {
     public void onSignupSelect(){
     	booksView.newCustomerWindow(this);
 	}
+    private class UserInserter implements Runnable {
+
+		private String name, address,userName, password;
+		public UserInserter(String name, String address, String username, String password) {
+			this.name=name;
+			this.address=address;
+			this.userName = username;
+			this.password = password;
+		}
+		@Override
+		public void run() {
+			try {
+				booksDb.addCustomer(name, address, userName, password);
+			} catch (IOException | SQLException e) {
+				booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+			}
+		}
+    }
 	public void onNewCustomerSubmit(String name, String address, String username, String password) throws IOException, SQLException{
-    	booksDb.addCustomer(name,address,username,password);
+    	Thread thread = new Thread(new UserInserter(name,address,username,password));
+    	thread.start();
 	}
+	
+	private class LogInManeger implements Runnable {
+
+		private String userName, password;
+		public LogInManeger(String username, String password) {
+			this.userName = username;
+			this.password = password;
+		}
+		@Override
+		public void run() {
+			try {
+				booksDb.loginAttempt(userName,password);
+			} catch (IOException | SQLException e) {
+				booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+			}
+		}
+    }
 	public void onLogInSelect(){
     	booksView.logInWindow(this);
 	}
 	public void onLogInSubmit(String username, String password) throws IOException, SQLException{
-		booksDb.loginAttempt(username,password);
+		Thread thread = new Thread(new LogInManeger(username,password));
+		thread.start();
 	}
 }
