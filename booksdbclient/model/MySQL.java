@@ -340,7 +340,7 @@ public class MySQL implements BooksDbInterface {
         ResultSet reviewRs;
 
         try{
-        String selectReviewSQL ="SELECT rating,review FROM t_review WHERE isbn = ?";
+        String selectReviewSQL ="SELECT rating,review,reviewDate FROM t_review WHERE isbn = ?";
         reviewPreStmt = con.prepareStatement(selectReviewSQL);
         reviewPreStmt.clearParameters();
         reviewPreStmt.setString(1, isbn);reviewRs = reviewPreStmt.executeQuery();
