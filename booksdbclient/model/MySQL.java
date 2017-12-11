@@ -18,6 +18,7 @@ import java.util.Scanner;
  */
 public class MySQL implements BooksDbInterface {
     private Connection con = null;
+    private Customer customer = null;
     /**
      * Establishes a connection with the database
      * @param database name of the daabase, userName and the passWord: database (String), userName (String), passWord(String)
@@ -490,7 +491,9 @@ public class MySQL implements BooksDbInterface {
     }
 
     @Override
-    public void loginAttempt(String username, String password) throws IOException, SQLException {
+    public boolean loginAttempt(String username, String password) throws IOException, SQLException {
+
+        boolean failOrAccept = false;
         String loginQuestion =
                 "SELECT customerId, name, address, userName, password FROM T_Customer WHERE username = ? AND password = ?";
         PreparedStatement preStmt = con.prepareStatement(loginQuestion);
@@ -506,12 +509,13 @@ public class MySQL implements BooksDbInterface {
                String userName = rs.getString("userName");
                String passWord = rs.getString("password");
 
-               Customer customer = new Customer(customerId,name,address,userName,passWord);
+               customer = new Customer(customerId,name,address,userName,passWord);
+               failOrAccept = true;
            }
-
         }
         finally{
             preStmt.close();
         }
+        return failOrAccept;
     }
 }

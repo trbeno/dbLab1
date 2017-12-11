@@ -72,5 +72,5 @@ public interface BooksDbInterface {
     public void addReview(String userID, String isbn, String rating, String text) throws IOException, SQLException;
 
     public void addCustomer (String name, String address, String userName, String password) throws IOException, SQLException;
-    public void loginAttempt (String userName, String password) throws IOException, SQLException;
+    public boolean loginAttempt (String userName, String password) throws IOException, SQLException;
 }
