@@ -1,10 +1,10 @@
 package booksdbclient.view;
 
 import booksdbclient.model.SearchMode;
+import javafx.application.Platform;
 import booksdbclient.model.Book;
 import booksdbclient.model.BooksDbInterface;
 
-import javafx.application.Platform;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -26,7 +26,7 @@ public class Controller {
         this.booksDb = booksDb;
         this.booksView = booksView;
     }
-
+    
     private class DisplayResult implements Runnable {
     	private List<Book> result=null;
     	public DisplayResult(List<Book> result) {
@@ -35,9 +35,9 @@ public class Controller {
 		@Override
 		public void run() {
 			booksView.displayBooks(result);
-
+			
 		}
-
+    	
     }
     protected void onSearchSelected(String searchFor, SearchMode mode) {
        Thread thread = new Thread(new Searcher(searchFor,mode));
@@ -307,9 +307,7 @@ public class Controller {
     	booksView.logInWindow(this);
 	}
 	public void onLogInSubmit(String username, String password) throws IOException, SQLException{
-		Boolean failOrAAccepted = booksDb.loginAttempt(username,password);
-
-		if(failOrAAccepted) booksView.showAlertAndWait("Welcome! ",INFORMATION);
-		else booksView.showAlertAndWait("No user Found",ERROR);
+		Thread thread = new Thread(new LogInManeger(username,password));
+		thread.start();
 	}
 }
