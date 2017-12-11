@@ -220,10 +220,18 @@ public class BooksPane extends VBox {
                 } catch (Exception e) {}
             }
         });
+
         manageMenu.getItems().addAll(addItem, removeItem, updateItem,rateItem,addAuthorItem);
 
+        Menu accoutMenu = new Menu("Accout");
+        MenuItem signinItem = new MenuItem("Sing Up");
+        MenuItem loginItem = new MenuItem("Log In");
+        MenuItem logout = new MenuItem("Log Out");
+
+        accoutMenu.getItems().addAll(signinItem,loginItem,logout);
+
         menuBar = new MenuBar();
-        menuBar.getMenus().addAll(fileMenu, searchMenu, manageMenu);
+        menuBar.getMenus().addAll(fileMenu, searchMenu, manageMenu,accoutMenu);
     }
     
     public void newAuthorWindow(Controller controller) {  
