@@ -394,7 +394,7 @@ public class MySQL implements BooksDbInterface {
     	try {
         preStmt.clearParameters();
         preStmt.setString(1,authorName);
-        preStmt.setString(2,authorName);
+        preStmt.setInt(2,customer.getCustomerId());
         preStmt.executeUpdate();
         }
         finally {
