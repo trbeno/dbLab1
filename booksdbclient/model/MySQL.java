@@ -75,16 +75,7 @@ public class MySQL implements BooksDbInterface {
                 String title = rs.getString("title");
                 String genre = rs.getString("genre");
 
-                /*
-                String askForAvgRatingSQL = "SELECT AVG(rating) FROM t_review WHERE isbn = ?";
-                askForAvgRating = con.prepareStatement(askForAvgRatingSQL);
-                askForAvgRating.clearParameters();
-                askForAvgRating.setString(1, isbn);
-                askForAvgRatingRs = askForAvgRating.executeQuery();
-
-                while (askForAvgRatingRs.next()) {
-*/
-                    float avgRating = getAvgRating(isbn);
+                float avgRating = getAvgRating(isbn);
 
                     ArrayList<Author> authors = getAuthors(isbn);
                     ArrayList<Review> reviews = getBookReviews(isbn);
