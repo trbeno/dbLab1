@@ -40,41 +40,44 @@ public class Controller {
 		@Override
 		public void run() {
 			 try {
-				if (searchFor != null && searchFor.length() > 0) {
-					List<Book> result = null;
-					switch (mode) {
-						case Title:
-							result = booksDb.searchBooksByTitle(searchFor);
-							break;
-						case ISBN:
-							result = booksDb.searchBooksByISBN(searchFor);
-							break;
-						case Author:
-							result = booksDb.searchBooksByAuthor(searchFor);
-							break;
-						case Rating:
-							result = booksDb.searchBooksByRating(searchFor);
-							break;
-						case Genre:
-							result = booksDb.searchBooksByGenre(searchFor);
-							break;
-						default:
-					}
-					if (result == null || result.isEmpty()) {
-						booksView.showAlertAndWait(
-								"No results found.", INFORMATION);
-					} else {
-						booksView.displayBooks(result);
-					}
-				} else {
-					booksView.showAlertAndWait(
-							"Enter a search string!", WARNING);
-				}
-			} catch (SQLException|IOException e) {
-				booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
-			} catch(NullPointerException e) {
-				booksView.showAlertAndWait("Database error. No connection to database",ERROR);
-			}
+		            if (searchFor != null && searchFor.length() > 0) {
+		                List<Book> result = null;
+		                switch (mode) {
+		                    case Title:
+		                        result = booksDb.searchBooksByTitle(searchFor);
+		                        break;
+		                    case ISBN:
+		                        result = booksDb.searchBooksByISBN(searchFor);
+		                        break;
+		                    case Author:
+		                    	result = booksDb.searchBooksByAuthor(searchFor);
+		                        break;
+		                    case Rating:
+		                        result = booksDb.searchBooksByRating(searchFor);
+		                        break;
+		                    case Genre:
+		                    	result = booksDb.searchBooksByGenre(searchFor);
+		                    	break;
+		                    default:
+		                }
+		                if (result == null || result.isEmpty()) {
+		                    booksView.showAlertAndWait(
+		                            "No results found.", INFORMATION);
+		                } else {
+		                    booksView.displayBooks(result);
+		                }
+		            } else {
+		                booksView.showAlertAndWait(
+		                        "Enter a search string!", WARNING);
+		            }
+		        } catch (SQLException|IOException e) {
+		            booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+		        }
+		        /*
+		        catch(NullPointerException e) {
+		        	booksView.showAlertAndWait("Database error. No connection to database",ERROR);
+			 	}
+			 	*/
 		}	
     }
     
