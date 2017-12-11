@@ -73,11 +73,9 @@ public class Controller {
 		        } catch (SQLException|IOException e) {
 		            booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
 		        }
-		        /*
 		        catch(NullPointerException e) {
 		        	booksView.showAlertAndWait("Database error. No connection to database",ERROR);
 			 	}
-			 	*/
 		}	
     }
     
@@ -90,21 +88,77 @@ public class Controller {
     public void newAuthorWindow() {
     	booksView.newAuthorWindow(this);
     }
+	private class AuthorInserter implements Runnable {
+			
+			private String authorName;
+			public AuthorInserter(String authorName) {
+				this.authorName=authorName;
+			}
+			@Override
+			public void run() {
+				try {
+					booksDb.insertNewAuthor(authorName);
+				} catch (IOException | SQLException e) {
+					booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+				}
+			}
+	 }
     public void onNewAuthorSubmit(String authorName) throws IOException, SQLException{
-    	if(!"".equals(authorName))
-    		booksDb.insertNewAuthor(authorName);
+    	if(!"".equals(authorName)) {
+    		AuthorInserter inserterJob = new AuthorInserter(authorName);
+    		inserterJob.run();
+    	}
+    		
     }
     public void onRateSelected() {
         booksView.ratingWindow(this);
     }
-    public void oneNewRatingSubmit(String isbn, String userID, String rating, String reviwe) throws IOException, SQLException{
-        booksDb.addReview(isbn, userID, rating, reviwe);
+    private class ReviewInserter implements Runnable {
+		
+		private String isbn, userID, rating, review;
+		public ReviewInserter(String isbn, String userID, String rating, String review) {
+			this.isbn = isbn;
+			this.userID=userID;
+			this.rating=rating;
+			this.review=review;
+		}
+		@Override
+		public void run() {
+			try {
+				booksDb.addReview(userID, isbn, rating, review);
+			} catch (IOException | SQLException e) {
+				booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+			}
+		}
+    }
+    public void oneNewRatingSubmit(String isbn, String userID, String rating, String review) throws IOException, SQLException{
+        ReviewInserter reviewJob = new ReviewInserter(isbn,userID,rating,review);
+        reviewJob.run();
     }
     public void onNewBookSelected() {
     	booksView.newBookWindow(this);
     }
+    private class BookInserter implements Runnable {
+		
+		private String isbn, genre, title, authors;
+		public BookInserter(String isbn,String genre, String title,String authors) {
+			this.isbn = isbn;
+			this.genre = genre;
+			this.title=title;
+			this.authors=authors;
+		}
+		@Override
+		public void run() {
+			try {
+				booksDb.addReview(isbn, genre, title, authors);
+			} catch (IOException | SQLException e) {
+				booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+			}
+		}
+    }
     public void onNewBookSubmit(String isbn,String genre, String title,String authors) throws IOException, SQLException{
-    	booksDb.insertNewBook(isbn, genre, title, authors);
+    	BookInserter inserterJob = new BookInserter(isbn, genre, title, authors);
+    	inserterJob.run();
     }
     public void onRowSelect(Book book){
     	booksView.displayReviews(book);
