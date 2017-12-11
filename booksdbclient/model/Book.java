@@ -1,5 +1,6 @@
 package booksdbclient.model;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Representation of a book.

@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import java.util.Date;
+
 /**
  * An implementation of the BooksDBInterface interface
  *
@@ -345,7 +347,8 @@ public class MySQL implements BooksDbInterface {
         while (reviewRs.next()) {
             String text = reviewRs.getString("review");
             float rating = reviewRs.getFloat("rating");
-            Review review = new Review(text, rating);
+            Date date = reviewRs.getDate("reviewDate");
+            Review review = new Review(text, rating,date);
             reviews.add(review);
             }
         }
@@ -469,16 +472,21 @@ public class MySQL implements BooksDbInterface {
     		IOException e = new IOException("Please log in to review a book");
     		throw e;
     	}
-    	String inputReviewSQL ="INSERT INTO t_review VALUES (?, ? ,?,?) ";
+
+        java.util.Date utilDate = new Date();
+        java.sql.Date date = new java.sql.Date(utilDate.getTime());
+
+    	String inputReviewSQL ="INSERT INTO t_review VALUES (?, ? ,? ,?, ?) ";
         PreparedStatement pre2Stmt = con.prepareStatement(inputReviewSQL);
     	try {
-	            pre2Stmt.clearParameters();
-	            pre2Stmt.setString(1,Integer.toString(customer.getCustomerId()));
-	            pre2Stmt.setString(2,isbn);
-	            pre2Stmt.setString(3, rating);
-	            pre2Stmt.setString(4,text);
-	            pre2Stmt.executeUpdate();
-	        }
+            pre2Stmt.clearParameters();
+            pre2Stmt.setString(1,isbn);
+            pre2Stmt.setString(2,Integer.toString(customer.getCustomerId()));
+            pre2Stmt.setString(3, rating);
+            pre2Stmt.setDate(4, date);
+            pre2Stmt.setString(5,text);
+            pre2Stmt.executeUpdate();
+    	}
     	 finally{
     		 pre2Stmt.close();
     	 }
