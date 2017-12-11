@@ -72,10 +72,12 @@ public class Controller {
 		            }
 		        } catch (SQLException|IOException e) {
 		            booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
-		        }catch(NullPointerException e) {
-		        	booksView.showAlertAndWait("Database error. No connecton to database",ERROR);
+		        }
+		        /*
+		        catch(NullPointerException e) {
+		        	booksView.showAlertAndWait("Database error. No connection to database",ERROR);
 			 	}
-			 	
+			 	*/
 		}	
     }
     

@@ -20,7 +20,7 @@ public class MySQL implements BooksDbInterface {
     private Connection con = null;
     /**
      * Establishes a connection with the database
-     * @param The name of the daabase, username and the passord: database (String), userName (String), passWord(String)
+     * @param database name of the daabase, userName and the passWord: database (String), userName (String), passWord(String)
      */
     @Override
     public boolean connect(String database, String userName, String passWord) throws IOException, SQLException {
@@ -53,19 +53,14 @@ public class MySQL implements BooksDbInterface {
     }
     /**
      * gets all the books which title matches the param
-     * @param The title of the book searchTitle (String)
+     * @param searchTitle title of the book searchTitle (String)
      * @return returns a List of all the selected books
      */
     @Override
     public List<Book> searchBooksByTitle(String searchTitle) throws IOException, SQLException  {
 
-
         PreparedStatement preStmt = null;
-        ResultSet rs = null;
-
-        PreparedStatement askForAvgRating = null;
-        ResultSet askForAvgRatingRs = null;
-
+        ResultSet rs ;
 
         searchTitle = searchTitle.toLowerCase();
         List<Book> result = new ArrayList<>();
@@ -80,6 +75,7 @@ public class MySQL implements BooksDbInterface {
                 String title = rs.getString("title");
                 String genre = rs.getString("genre");
 
+                /*
                 String askForAvgRatingSQL = "SELECT AVG(rating) FROM t_review WHERE isbn = ?";
                 askForAvgRating = con.prepareStatement(askForAvgRatingSQL);
                 askForAvgRating.clearParameters();
@@ -87,28 +83,25 @@ public class MySQL implements BooksDbInterface {
                 askForAvgRatingRs = askForAvgRating.executeQuery();
 
                 while (askForAvgRatingRs.next()) {
-
-                    float avgRating = askForAvgRatingRs.getFloat(1);
+*/
+                    float avgRating = getAvgRating(isbn);
 
                     ArrayList<Author> authors = getAuthors(isbn);
                     ArrayList<Review> reviews = getBookReviews(isbn);
                     Book book = new Book(isbn, title, genre,avgRating,reviews);
                     book.setAuthors(authors);
                     result.add(book);
-                }
             }
         }
         finally {
             preStmt.close();
-            rs.close();
-            askForAvgRating.close();
-            askForAvgRatingRs.close();
+
         }
         return result;
     }    
     /**
      * gets all the books that which isbn matches the param
-     * @param The isbn number to search for searchISBN (String)
+     * @param searchISBN isbn number to search for searchISBN (String)
      * @return returns a List of all the selected books
      */
     @Override
@@ -117,7 +110,7 @@ public class MySQL implements BooksDbInterface {
         List<Book> result = new ArrayList<>();
 
         PreparedStatement preStmt = null;
-        ResultSet rs = null;
+        ResultSet rs;
 
         try {
             String selectSQL ="SELECT * FROM t_book WHERE isbn like ?";
@@ -142,13 +135,13 @@ public class MySQL implements BooksDbInterface {
         }
         finally {
             preStmt.close();
-            rs.close();
+
         }
         return result;
     }
     /**
      * gets all the books that has an Author that matches the param
-     * @param The name of the Author searchAuthor (String)
+     * @param searchAuthor name of the Author searchAuthor (String)
      * @return returns a List of all the selected books
      */
     @Override
@@ -157,9 +150,9 @@ public class MySQL implements BooksDbInterface {
         searchAuthor = searchAuthor.toLowerCase();
 
         PreparedStatement preStmt = null;
-        ResultSet rs = null;
+        ResultSet rs ;
         PreparedStatement booksPreStmt = null;
-        ResultSet bookRs = null;
+        ResultSet bookRs;
 
 
         try {
@@ -189,6 +182,7 @@ public class MySQL implements BooksDbInterface {
                     String genre = bookRs.getString("genre");
 
                     float avgRating = getAvgRating(isbn);
+
                     ArrayList<Review> reviews = getBookReviews(isbn);
                     Book book = new Book(isbn, title, genre, avgRating,reviews);
                     book.setAuthors(authors);
@@ -201,16 +195,14 @@ public class MySQL implements BooksDbInterface {
         }
         finally {
             preStmt.close();
-            rs.close();
             booksPreStmt.close();
-            bookRs.close();
         }
         return result;
     }    
     
     /**
      * gets all the books that has an average rating above or equal to the param
-     * @param The desired rating rating (String)
+     * @param rating desired rating rating (String)
      * @return returns a List of all the selected books
      */
     public List<Book> searchBooksByRating (String rating)throws IOException, SQLException{
@@ -219,12 +211,9 @@ public class MySQL implements BooksDbInterface {
 
         PreparedStatement preStmt = null;
         ResultSet rs = null;
-        PreparedStatement getAvgRatingStmt = null;
-        ResultSet avgRatingRs = null;
+ ;
         PreparedStatement getBooksStmt = null;
-        ResultSet bookRs = null;
-
-
+        ResultSet bookRs;
 
         try {
             String selectBookByAVGRatingSQL ="SELECT isbn FROM t_review WHERE ? <= (SELECT AVG(rating) FROM t_review) GROUP BY isbn";
@@ -236,50 +225,38 @@ public class MySQL implements BooksDbInterface {
             while(rs.next()) {
 
                 String isbn = rs.getString("isbn");
-                String avgRatingSQL = "SELECT AVG(rating) FROM t_review WHERE isbn = ?";
-                getAvgRatingStmt = con.prepareStatement(avgRatingSQL);
-                getAvgRatingStmt.clearParameters();
-                getAvgRatingStmt.setString(1, isbn);
-                avgRatingRs = getAvgRatingStmt.executeQuery();
+                float foundRating = getAvgRating(isbn);
 
-                while (avgRatingRs.next()) {
+                String selectSQL = "SELECT * FROM t_book WHERE isbn like ?";
+                getBooksStmt = con.prepareStatement(selectSQL);
+                getBooksStmt.clearParameters();
+                getBooksStmt.setString(1, isbn);
+                bookRs = getBooksStmt.executeQuery();
 
-                    float foundRating = avgRatingRs.getFloat(1);
+                while (bookRs.next()) {
 
-                    String selectSQL = "SELECT * FROM t_book WHERE isbn like ?";
-                    getBooksStmt = con.prepareStatement(selectSQL);
-                    getBooksStmt.clearParameters();
-                    getBooksStmt.setString(1, isbn);
-                    bookRs = getBooksStmt.executeQuery();
+                    String title = bookRs.getString("title");
+                    String genre = bookRs.getString("genre");
 
-                    while (bookRs.next()) {
-
-                        String title = bookRs.getString("title");
-                        String genre = bookRs.getString("genre");
-
-                        ArrayList<Author> authors = getAuthors(isbn);
-                        ArrayList<Review> reviews = getBookReviews(isbn);
-                        Book book = new Book(isbn, title, genre, foundRating,reviews);
-                        book.setAuthors(authors);
-                        result.add(book);
-                    }
+                    ArrayList<Author> authors = getAuthors(isbn);
+                    ArrayList<Review> reviews = getBookReviews(isbn);
+                    Book book = new Book(isbn, title, genre, foundRating,reviews);
+                    book.setAuthors(authors);
+                    result.add(book);
                 }
+
             }
         }
         finally {
             preStmt.close();
-            rs.close();
-            getAvgRatingStmt.close();
-            avgRatingRs.close();
             getBooksStmt.close();
-            bookRs.close();
         }
         return result;
     }
     
     /**
      * gets all the books that is of a specific genre
-     * @param The desired genre genre (String)
+     * @param searchGenre desired genre genre (String)
      * @return returns a List of all the selected books
      */
     @Override
@@ -288,10 +265,7 @@ public class MySQL implements BooksDbInterface {
         List<Book> result = new ArrayList<>();
 
         PreparedStatement preStmt = null;
-        ResultSet rs = null;
-        PreparedStatement askForAvgRating = null;
-        ResultSet askForAvgRatingRs = null;
-
+        ResultSet rs;
 
         try {
             String selectSQL ="SELECT * FROM T_Book WHERE genre like ?";
@@ -304,36 +278,25 @@ public class MySQL implements BooksDbInterface {
                 String title = rs.getString("title");
                 String genre = rs.getString("genre");
 
-                String askForAvgRatingSQL = "SELECT AVG(rating) FROM t_review WHERE isbn = ?";
-                askForAvgRating = con.prepareStatement(askForAvgRatingSQL);
-                askForAvgRating.clearParameters();
-                askForAvgRating.setString(1, isbn);
-                askForAvgRatingRs = askForAvgRating.executeQuery();
+                float avgRating = getAvgRating(isbn);
 
-                while (askForAvgRatingRs.next()) {
-
-                    float avgRating = askForAvgRatingRs.getFloat(1);
-
-                    ArrayList<Author> authors = getAuthors(isbn);
-                    ArrayList<Review> reviews = getBookReviews(isbn);
-                    Book book = new Book(isbn, title, genre,avgRating,reviews);
-                    book.setAuthors(authors);
-                    result.add(book);
-                }
+                ArrayList<Author> authors = getAuthors(isbn);
+                ArrayList<Review> reviews = getBookReviews(isbn);
+                Book book = new Book(isbn, title, genre,avgRating,reviews);
+                book.setAuthors(authors);
+                result.add(book);
             }
         }
         finally {
             preStmt.close();
-            rs.close();
-            askForAvgRating.close();
-            askForAvgRatingRs.close();
+
         }
         return result;
     }
     
     /**
      * helpfunction to get all authors of a book
-     * @param The isbn of the selected book isbn (String)
+     * @param isbn of the selected book isbn (String)
      * @return returns a List of all the authors
      */
     private ArrayList<Author> getAuthors(String isbn)throws IOException, SQLException{
@@ -341,7 +304,7 @@ public class MySQL implements BooksDbInterface {
 
 
         PreparedStatement authorPreStmt = null;
-        ResultSet authorRs = null;
+        ResultSet authorRs;
 
 
         try {
@@ -360,21 +323,20 @@ public class MySQL implements BooksDbInterface {
         }
         finally {
             authorPreStmt.close();
-            authorRs.close();
         }
         return authors;
     }
     
     /**
      * helpfunction to get all the reviews for a book
-     * @param The isbn of the selected book isbn (String)
+     * @param isbn of the selected book isbn (String)
      * @return returns a List of all the reviews
      */
     private ArrayList<Review> getBookReviews(String isbn) throws IOException, SQLException{
         ArrayList<Review> reviews = new ArrayList<Review>();
 
         PreparedStatement reviewPreStmt = null;
-        ResultSet reviewRs = null;
+        ResultSet reviewRs;
 
         try{
         String selectReviewSQL ="SELECT rating,review FROM t_review WHERE isbn = ?";
@@ -390,21 +352,20 @@ public class MySQL implements BooksDbInterface {
         }
         finally {
             reviewPreStmt.close();
-            reviewRs.close();
         }
         return reviews;
     }
 
     /**
      * helpfunction to get the average for a book
-     * @param The isbn of the selected book isbn (String)
+     * @param isbn of the selected book isbn (String)
      * @return returns the average rating
      */
     private float getAvgRating(String isbn)throws IOException, SQLException{
         float avgRating = 0;
 
         PreparedStatement askForAvgRating = null;
-        ResultSet askForAvgRatingRs = null;
+        ResultSet askForAvgRatingRs;
 
         try {
             String askForAvgRatingSQL = "SELECT AVG(rating) FROM t_review WHERE isbn = ?";
@@ -413,20 +374,18 @@ public class MySQL implements BooksDbInterface {
             askForAvgRating.setString(1, isbn);
             askForAvgRatingRs = askForAvgRating.executeQuery();
             while (askForAvgRatingRs.next()) {
-
                 avgRating = askForAvgRatingRs.getFloat(1);
             }
         }
         finally {
             askForAvgRating.close();
-            askForAvgRatingRs.close();
         }
         return avgRating;
     }
     
     /**
      * creates a new author and inserts it into the database
-     * @param The name of the author (String)
+     * @param authorName of the author (String)
      * @return returns the average rating
      */
     @Override 
@@ -444,7 +403,7 @@ public class MySQL implements BooksDbInterface {
     }
     /**
      * creates a new book and inserts it into the database
-     * @param The name of the author (String)
+     * @param isbn ,genre, title, authorName strings with information about the new book
      * @return returns the average rating
      */
     @Override
@@ -454,7 +413,7 @@ public class MySQL implements BooksDbInterface {
     	PreparedStatement bookPreStmt=null;
     	PreparedStatement authorPreStmt =null;
     	PreparedStatement madePreStmt=null;
-    	ResultSet authorRs =null;
+    	ResultSet authorRs;
     	try {
     		con.setAutoCommit(false);
 	        String insertBook = "INSERT INTO T_Book VALUES(?,?,?)";	
@@ -476,8 +435,8 @@ public class MySQL implements BooksDbInterface {
 	             if(!authorRs.next()) {
 	            	System.out.println("adding new author");
 	             	
-	            	AuthorInserter authorInsert = new AuthorInserter(authors[i],con);
-	            	authorInsert.run();
+	            	//AuthorInserter authorInsert = new AuthorInserter(authors[i],con);
+	            	//authorInsert.run();
 	             	authorPreStmt.clearParameters();
 	                authorPreStmt.setString(1, authors[i]);
 	                authorRs = authorPreStmt.executeQuery(); //getting authorId for next insert since we made a new one
