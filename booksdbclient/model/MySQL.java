@@ -464,6 +464,12 @@ public class MySQL implements BooksDbInterface {
     
     @Override
     public void addReview(String userID, String isbn, String rating, String text) throws IOException, SQLException {
+    	if(customer==null) {
+    		IOException e = new IOException("Please log in to review a book");
+    		throw e;
+    	}
+    		
+    	
     	String inputReviewSQL ="INSERT INTO t_review VALUES (?, ? ,?,?) ";
         PreparedStatement pre2Stmt = con.prepareStatement(inputReviewSQL);
     	try {

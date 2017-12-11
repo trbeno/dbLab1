@@ -307,7 +307,7 @@ public class Controller {
 		@Override
 		public void run() {
 			try {
-				Boolean failOrAAccepted = booksDb.loginAttempt(username,password);
+				Boolean failOrAAccepted = booksDb.loginAttempt(userName,password);
 				if(!failOrAAccepted) {
 					Platform.runLater(new Runnable() {
 	            	    @Override
