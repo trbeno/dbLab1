@@ -16,7 +16,7 @@ public class Book {
     private String genre;
     private ArrayList<Review> reviwList;
     private float  rating;
-
+    private int customerID;
 
     public Book(int bookId, String isbn, String title,String genre) {
         this.bookId = bookId;
@@ -24,12 +24,13 @@ public class Book {
         this.title = title;
         this.genre = genre;
     }
-    public Book(String isbn, String title, String genre,float rating,ArrayList<Review> reviews){
+    public Book(String isbn, String title, String genre,float rating,ArrayList<Review> reviews,int customerID){
         this.isbn = isbn;
         this.title = title;
         this.genre = genre;
         this.rating = rating;
         this.reviwList = reviews;
+        this.setCustomerID(customerID);
     }
 
     public void addReviw(Review review){
@@ -85,4 +86,10 @@ public class Book {
         }
         return builder.toString();
     }
+	public int getCustomerID() {
+		return customerID;
+	}
+	public void setCustomerID(int customerID) {
+		this.customerID = customerID;
+	}
 }

@@ -201,8 +201,14 @@ public class BooksPane extends VBox {
                 controller.onNewBookSelected();
             }
         });
-        MenuItem removeItem = new MenuItem("Remove");
         MenuItem updateItem = new MenuItem("Update");
+        MenuItem removeItem = new MenuItem("Remove");
+        removeItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                controller.removeBookSelected();
+            }
+        });
         MenuItem rateItem = new MenuItem("Rate");
 
         MenuItem addAuthorItem = new MenuItem("Add Author");
@@ -469,6 +475,36 @@ public class BooksPane extends VBox {
             }
         });
         dialogVbox.getChildren().addAll(usernameLabel,usernameField,passwordLabel,passwordField,submitBtn);
+        Scene dialogScene = new Scene(dialogVbox, 300, 200);
+        dialog.setScene(dialogScene);
+        dialog.show();
+    }
+    
+    public void removeBookWindow(Controller controller){
+        final Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        VBox dialogVbox = new VBox(20);
+
+        final TextField  isbnField = new TextField();
+        final Label isbnLabel = new Label("Enter ISBN of the book to remove:");
+
+        Button submitBtn = new Button();
+        submitBtn.setText("Submit");
+        submitBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    String isbnToRemove = isbnField.getText();
+
+                    controller.removeBookSubmit(isbnToRemove);
+                    dialog.close();
+                } catch (IOException | SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        });
+        dialogVbox.getChildren().addAll(isbnLabel,isbnField,submitBtn);
         Scene dialogScene = new Scene(dialogVbox, 300, 200);
         dialog.setScene(dialogScene);
         dialog.show();
