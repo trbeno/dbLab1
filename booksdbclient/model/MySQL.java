@@ -465,7 +465,13 @@ public class MySQL implements BooksDbInterface {
     			 madePreStmt.close();
     	 }
     }
-    
+
+    /**
+     * To add new review to the sql databse whit input by user
+     * @param isbn the isbn to add reviews to
+     * @param rating the rating set by user on the book
+     * @param text the reviw text
+     */
     @Override
     public void addReview(String isbn, String rating, String text) throws IOException, SQLException {
     	if(customer==null) {
@@ -492,6 +498,13 @@ public class MySQL implements BooksDbInterface {
     	 }
     }
 
+    /**
+     * Adding a new customer / user by the applikation
+     * @param name
+     * @param address
+     * @param userName the name the user want to log in white
+     * @param password the users password
+     */
     @Override
     public void addCustomer(String name, String address, String userName, String password) throws IOException, SQLException {
         String inputReviewSQL ="INSERT INTO T_Customer(name,address, userName, password) VALUES (?, ? ,?,?) ";
@@ -509,6 +522,11 @@ public class MySQL implements BooksDbInterface {
         }
     }
 
+    /**
+     * Removes a book from the sql databse bu isbn
+     * @param isbn the isbn of the book to remove
+
+     */
     @Override
     public void removeBookByIsbn(String isbn) throws IOException, SQLException {
 
@@ -524,6 +542,13 @@ public class MySQL implements BooksDbInterface {
         }
     }
 
+    /**
+     * To log in to the application using a customer stored in the databse
+     * @param username
+     * @param password
+     * @return return true of false depending if the log in was successful or not
+
+     */
     @Override
     public boolean loginAttempt(String username, String password) throws IOException, SQLException {
 
