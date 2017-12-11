@@ -25,7 +25,7 @@ public class Review {
     	StringBuilder builder = new StringBuilder().append(System.getProperty("line.separator"));
     	builder.append("Rating: ").append(this.rating).append(System.getProperty("line.separator"));
     	builder.append("Review: ").append(this.review).append(System.getProperty("line.separator"));
-    	builder.append("Adding date: ").append(this.date);
+    	builder.append("Review date: ").append(this.date);
     	return builder.toString();
     }
     public void setReview(String review) {

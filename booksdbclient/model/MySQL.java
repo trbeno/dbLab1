@@ -518,12 +518,6 @@ public class MySQL implements BooksDbInterface {
             removeStmt.clearParameters();
             removeStmt.setString(1,isbn);
             removeStmt.executeUpdate();
-            String removeFromMadeRequest = "DELETE FROM T_Made WHERE isbn = ?";
-            removeStmt = con.prepareStatement(removeFromMadeRequest);
-            removeStmt.clearParameters();
-            removeStmt.setString(1,isbn);
-            removeStmt.executeUpdate();
-
         }
         finally{
             removeStmt.close();

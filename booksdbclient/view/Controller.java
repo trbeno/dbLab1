@@ -205,7 +205,7 @@ public class Controller {
 				Platform.runLater(new Runnable() {
             	    @Override
             	    public void run() {
-            	    	booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+            	    	booksView.showAlertAndWait("You have already reviewd this book",ERROR);
             	    }
             	});
 			}

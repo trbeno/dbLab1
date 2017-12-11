@@ -82,10 +82,11 @@ public class Book {
         }
         builder.append(System.getProperty("line.separator"));
         builder.append("Average rating: ").append(this.rating);
+        builder.append(System.getProperty("line.separator")).append("Book added by: ").append(customerID);
+        builder.append(System.getProperty("line.separator"));
         for (int i = 0; i < reviwList.size() ; i++){
             builder.append(reviwList.get(i)).append(System.getProperty("line.separator"));
         }
-        builder.append(System.getProperty("line.separator")).append("Added by: ").append(customerID);
         return builder.toString();
     }
 	public int getCustomerID() {
