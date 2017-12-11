@@ -76,12 +76,13 @@ public class MySQL implements BooksDbInterface {
                 String isbn = rs.getString("isbn");
                 String title = rs.getString("title");
                 String genre = rs.getString("genre");
+                int customerID = rs.getInt("customerID");
 
                 float avgRating = getAvgRating(isbn);
 
                 ArrayList<Author> authors = getAuthors(isbn);
                 ArrayList<Review> reviews = getBookReviews(isbn);
-                Book book = new Book(isbn, title, genre,avgRating,reviews,customer.getCustomerId());
+                Book book = new Book(isbn, title, genre,avgRating,reviews,customerID);
                 book.setAuthors(authors);
                 result.add(book);
             }
@@ -115,12 +116,13 @@ public class MySQL implements BooksDbInterface {
                 String isbn = rs.getString("isbn");
                 String title = rs.getString("title");
                 String genre = rs.getString("genre");
+                int customerID = rs.getInt("customerID");
 
                 float avgRating = getAvgRating(isbn);
 
                 ArrayList<Author> authors = getAuthors(isbn);
                 ArrayList<Review> reviews = getBookReviews(isbn);
-                Book book = new Book(isbn, title, genre,avgRating,reviews,customer.getCustomerId());
+                Book book = new Book(isbn, title, genre,avgRating,reviews,customerID);
                 book.setAuthors(authors);
                 result.add(book);
             }
@@ -172,11 +174,12 @@ public class MySQL implements BooksDbInterface {
                     String isbn = bookRs.getString("isbn");
                     String title = bookRs.getString("title");
                     String genre = bookRs.getString("genre");
+                    int customerID = rs.getInt("customerID");
 
                     float avgRating = getAvgRating(isbn);
 
                     ArrayList<Review> reviews = getBookReviews(isbn);
-                    Book book = new Book(isbn, title, genre,avgRating,reviews,customer.getCustomerId());
+                    Book book = new Book(isbn, title, genre,avgRating,reviews,customerID);
                     book.setAuthors(authors);
 
                     System.out.println(book.getTitle());
@@ -230,10 +233,11 @@ public class MySQL implements BooksDbInterface {
 
                     String title = bookRs.getString("title");
                     String genre = bookRs.getString("genre");
+                    int customerID = rs.getInt("customerID");
 
                     ArrayList<Author> authors = getAuthors(isbn);
                     ArrayList<Review> reviews = getBookReviews(isbn);
-                    Book book = new Book(isbn, title, genre, foundRating,reviews,customer.getCustomerId());
+                    Book book = new Book(isbn, title, genre, foundRating,reviews,customerID);
                     book.setAuthors(authors);
                     result.add(book);
                 }
@@ -271,19 +275,19 @@ public class MySQL implements BooksDbInterface {
                 String isbn = rs.getString("isbn");
                 String title = rs.getString("title");
                 String genre = rs.getString("genre");
+                int customerID = rs.getInt("customerID");
 
                 float avgRating = getAvgRating(isbn);
 
                 ArrayList<Author> authors = getAuthors(isbn);
                 ArrayList<Review> reviews = getBookReviews(isbn);
-                Book book = new Book(isbn, title, genre,avgRating,reviews,customer.getCustomerId());
+                Book book = new Book(isbn, title, genre,avgRating,reviews,customerID);
                 book.setAuthors(authors);
                 result.add(book);
             }
         }
         finally {
             preStmt.close();
-
         }
         return result;
     }
@@ -410,7 +414,7 @@ public class MySQL implements BooksDbInterface {
     	ResultSet authorRs;
     	try {
     		con.setAutoCommit(false);
-	        String insertBook = "INSERT INTO T_Book VALUES(?,?,?,?)";	
+	        String insertBook = "INSERT INTO T_Book VALUES(?,?,?,?)";
 	        bookPreStmt = con.prepareStatement(insertBook);
 	        bookPreStmt.clearParameters();
 	        bookPreStmt.setString(1, isbn);
@@ -490,7 +494,6 @@ public class MySQL implements BooksDbInterface {
             preStmt.close();
         }
     }
-    
 
     @Override
     public void removeBookByIsbn(String isbn) throws IOException, SQLException {
