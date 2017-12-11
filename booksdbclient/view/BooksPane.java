@@ -226,7 +226,7 @@ public class BooksPane extends VBox {
             }
         });
 
-        manageMenu.getItems().addAll(addItem, removeItem, updateItem,rateItem,addAuthorItem);
+        manageMenu.getItems().addAll(addItem, removeItem,updateItem , rateItem,addAuthorItem);
 
         Menu accoutMenu = new Menu("Account");
         MenuItem signupItem = new MenuItem("Sign Up");
@@ -296,9 +296,6 @@ public class BooksPane extends VBox {
         final TextField isbnField = new TextField();
         final Label isbnLabel = new Label("Enter ISBN:");
 
-        final TextField userIDField = new TextField();
-        final Label userIDLabel = new Label("Enter userID:");
-
         final TextField ratingField = new TextField();
         final Label ratingLabel = new Label("Enter Rating:");
 
@@ -314,7 +311,6 @@ public class BooksPane extends VBox {
             public void handle(ActionEvent event) {
                 try {
                     String isbn = isbnField.getText();
-                    String userID = userIDField.getText();
                     String rating = ratingField.getText();
                     String reviw = reviwField.getText();
                     if(Float.parseFloat(rating)>5|| Float.parseFloat(rating)<0) {
@@ -327,7 +323,7 @@ public class BooksPane extends VBox {
                     	return;
                     }
                     	
-                    controller.oneNewRatingSubmit(isbn,userID,rating,reviw);
+                    controller.oneNewRatingSubmit(isbn,rating,reviw);
                     dialog.close();
                     
                 } catch (IOException | SQLException e) {
@@ -343,7 +339,7 @@ public class BooksPane extends VBox {
         });
 
         dialogVbox.getChildren().addAll
-                (isbnLabel,isbnField,userIDLabel,userIDField,ratingLabel,ratingField,reviwLabel,reviwField,submitBtn);
+                (isbnLabel,isbnField,ratingLabel,ratingField,reviwLabel,reviwField,submitBtn);
         Scene dialogScene = new Scene(dialogVbox, 300, 400);
         dialog.setScene(dialogScene);
         dialog.show();
@@ -479,7 +475,6 @@ public class BooksPane extends VBox {
         dialog.setScene(dialogScene);
         dialog.show();
     }
-    
     public void removeBookWindow(Controller controller){
         final Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);

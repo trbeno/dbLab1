@@ -191,17 +191,16 @@ public class Controller {
     }
     private class ReviewInserter implements Runnable {
 
-		private String isbn, userID, rating, review;
-		public ReviewInserter(String isbn, String userID, String rating, String review) {
+		private String isbn, rating, review;
+		public ReviewInserter(String isbn, String rating, String review) {
 			this.isbn = isbn;
-			this.userID=userID;
 			this.rating=rating;
 			this.review=review;
 		}
 		@Override
 		public void run() {
 			try {
-				booksDb.addReview(userID, isbn, rating, review);
+				booksDb.addReview(isbn, rating, review);
 			} catch (IOException | SQLException e) {
 				Platform.runLater(new Runnable() {
             	    @Override
@@ -212,8 +211,8 @@ public class Controller {
 			}
 		}
     }
-    public void oneNewRatingSubmit(String isbn, String userID, String rating, String review) throws IOException, SQLException{
-        Thread thread = new Thread(new ReviewInserter(isbn,userID,rating,review));
+    public void oneNewRatingSubmit(String isbn, String rating, String review) throws IOException, SQLException{
+        Thread thread = new Thread(new ReviewInserter(isbn,rating,review));
 		thread.start();
     }
     public void onNewBookSelected() {
@@ -369,7 +368,7 @@ public class Controller {
 			}
 		}
 	}
-	
+
 	public void onLogInSelect(){
     	booksView.logInWindow(this);
 	}
