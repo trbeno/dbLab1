@@ -18,6 +18,8 @@ import java.util.Scanner;
  */
 public class MySQL implements BooksDbInterface {
     private Connection con = null;
+    private Customer customer;
+
     /**
      * Establishes a connection with the database
      * @param database name of the daabase, userName and the passWord: database (String), userName (String), passWord(String)
@@ -104,7 +106,7 @@ public class MySQL implements BooksDbInterface {
         ResultSet rs;
 
         try {
-            String selectSQL ="SELECT * FROM T_Book WHERE isbn like ?";
+            String selectSQL ="SELECT * FROM t_book WHERE isbn like ?";
             preStmt = con.prepareStatement(selectSQL);
             preStmt.clearParameters();
             preStmt.setString(1,'%'+searchISBN+'%');
@@ -147,7 +149,7 @@ public class MySQL implements BooksDbInterface {
 
 
         try {
-            String selectAuthorSQL ="SELECT * FROM T_Author WHERE name like ?";
+            String selectAuthorSQL ="SELECT * FROM t_author WHERE name like ?";
             preStmt = con.prepareStatement(selectAuthorSQL);
             preStmt.clearParameters();
             preStmt.setString(1,'%'+searchAuthor+'%');
@@ -160,7 +162,7 @@ public class MySQL implements BooksDbInterface {
                 Author author = new Author(name);
                 authors.add(author);
 
-                String selectBooksSQL ="SELECT * FROM T_Book INNER JOIN t_made ON T_Book.isbn = t_made.isbn WHERE T_made.authorID = ?";
+                String selectBooksSQL ="SELECT * FROM t_book INNER JOIN t_made ON t_book.isbn = t_made.isbn WHERE T_made.authorID = ?";
                 booksPreStmt = con.prepareStatement(selectBooksSQL);
                 booksPreStmt.clearParameters();
                 booksPreStmt.setString(1,authorID);
@@ -202,8 +204,8 @@ public class MySQL implements BooksDbInterface {
         List<Book> result = new ArrayList<>();
 
         PreparedStatement preStmt = null;
-        ResultSet rs = null;
- ;
+        ResultSet rs;
+
         PreparedStatement getBooksStmt = null;
         ResultSet bookRs;
 
@@ -219,7 +221,7 @@ public class MySQL implements BooksDbInterface {
                 String isbn = rs.getString("isbn");
                 float foundRating = getAvgRating(isbn);
 
-                String selectSQL = "SELECT * FROM T_Book WHERE isbn like ?";
+                String selectSQL = "SELECT * FROM t_book WHERE isbn like ?";
                 getBooksStmt = con.prepareStatement(selectSQL);
                 getBooksStmt.clearParameters();
                 getBooksStmt.setString(1, isbn);
@@ -302,7 +304,7 @@ public class MySQL implements BooksDbInterface {
 
         try {
             String selectAuthorSQL =
-                    "SELECT name FROM T_Author INNER JOIN t_made ON T_Author.authorID = t_made.authorID WHERE isbn = ?";
+                    "SELECT name FROM t_author INNER JOIN t_made ON t_author.authorID = t_made.authorID WHERE isbn = ?";
             authorPreStmt = con.prepareStatement(selectAuthorSQL);
             authorPreStmt.clearParameters();
             authorPreStmt.setString(1, isbn);
@@ -474,7 +476,7 @@ public class MySQL implements BooksDbInterface {
 
     @Override
     public void addCustomer(String name, String address, String userName, String password) throws IOException, SQLException {
-        String inputReviewSQL ="INSERT INTO T_Customer(name,address, userName, password) VALUES (?, ? ,?,?) ";
+        String inputReviewSQL ="INSERT INTO t_customer(name,address, userName, password) VALUES (?, ? ,?,?) ";
         PreparedStatement preStmt = con.prepareStatement(inputReviewSQL);
         try {
             preStmt.clearParameters();
@@ -490,28 +492,35 @@ public class MySQL implements BooksDbInterface {
     }
 
     @Override
-    public void loginAttempt(String username, String password) throws IOException, SQLException {
+    public boolean loginAttempt(String username, String password) throws IOException, SQLException {
+
+        username = username.toLowerCase();
+        password = password.toLowerCase();
+
+        boolean failOrAccepted = false;
+
         String loginQuestion =
-                "SELECT customerId, name, address, userName, password FROM T_Customer WHERE username = ? AND password = ?";
+                "SELECT customerId, name, address, userName, password FROM t_customer WHERE username = ? AND password = ?";
         PreparedStatement preStmt = con.prepareStatement(loginQuestion);
-        try{
+        try {
             preStmt.clearParameters();
-            preStmt.setString(1,username);
-            preStmt.setString(2,password);
-           ResultSet rs =  preStmt.executeQuery();
-           while (rs.next()){
-               int customerId = rs.getInt("customerID");
-               String name = rs.getString("name");
-               String address = rs.getString("address");
-               String userName = rs.getString("userName");
-               String passWord = rs.getString("password");
-
-               Customer customer = new Customer(customerId,name,address,userName,passWord);
-           }
-
+            preStmt.setString(1, username);
+            preStmt.setString(2, password);
+            ResultSet rs = preStmt.executeQuery();
+            while (rs.next()) {
+                int customerId = rs.getInt("customerID");
+                String name = rs.getString("name");
+                String address = rs.getString("address");
+                String userName = rs.getString("userName");
+                String passWord = rs.getString("password");
+                customer = new Customer(customerId, name, address, userName, passWord);
+                failOrAccepted = true;
+            }
+            customer.toString();
         }
         finally{
             preStmt.close();
         }
+        return failOrAccepted;
     }
 }
