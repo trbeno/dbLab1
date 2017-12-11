@@ -389,11 +389,12 @@ public class MySQL implements BooksDbInterface {
      */
     @Override 
     public void insertNewAuthor(String authorName) throws IOException, SQLException{
-    	String selectAuthorSQL ="INSERT INTO T_Author(name) values(?)";
+    	String selectAuthorSQL ="INSERT INTO T_Author(name,customerID) values(?,?)";
     	PreparedStatement preStmt = con.prepareStatement(selectAuthorSQL);
     	try {
         preStmt.clearParameters();
         preStmt.setString(1,authorName);
+        preStmt.setString(2,authorName);
         preStmt.executeUpdate();
         }
         finally {
@@ -463,12 +464,12 @@ public class MySQL implements BooksDbInterface {
     }
     
     @Override
-    public void addReview(String userID, String isbn, String rating, String text) throws IOException, SQLException {
+    public void addReview(String isbn, String rating, String text) throws IOException, SQLException {
     	String inputReviewSQL ="INSERT INTO t_review VALUES (?, ? ,?,?) ";
         PreparedStatement pre2Stmt = con.prepareStatement(inputReviewSQL);
     	try {
 	            pre2Stmt.clearParameters();
-	            pre2Stmt.setString(1,userID);
+	            pre2Stmt.setString(1,Integer.toString(customer.getCustomerId()));
 	            pre2Stmt.setString(2,isbn);
 	            pre2Stmt.setString(3, rating);
 	            pre2Stmt.setString(4,text);
@@ -495,7 +496,6 @@ public class MySQL implements BooksDbInterface {
             preStmt.close();
         }
     }
-    
 
     @Override
     public void removeBookByIsbn(String isbn) throws IOException, SQLException {
