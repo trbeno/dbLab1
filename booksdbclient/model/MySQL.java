@@ -81,7 +81,7 @@ public class MySQL implements BooksDbInterface {
 
                 ArrayList<Author> authors = getAuthors(isbn);
                 ArrayList<Review> reviews = getBookReviews(isbn);
-                Book book = new Book(isbn, title, genre,avgRating,reviews);
+                Book book = new Book(isbn, title, genre,avgRating,reviews,customer.getCustomerId());
                 book.setAuthors(authors);
                 result.add(book);
             }
@@ -120,8 +120,7 @@ public class MySQL implements BooksDbInterface {
 
                 ArrayList<Author> authors = getAuthors(isbn);
                 ArrayList<Review> reviews = getBookReviews(isbn);
-
-                Book book = new Book(isbn, title, genre, avgRating,reviews);
+                Book book = new Book(isbn, title, genre,avgRating,reviews,customer.getCustomerId());
                 book.setAuthors(authors);
                 result.add(book);
             }
@@ -177,7 +176,7 @@ public class MySQL implements BooksDbInterface {
                     float avgRating = getAvgRating(isbn);
 
                     ArrayList<Review> reviews = getBookReviews(isbn);
-                    Book book = new Book(isbn, title, genre, avgRating,reviews);
+                    Book book = new Book(isbn, title, genre,avgRating,reviews,customer.getCustomerId());
                     book.setAuthors(authors);
 
                     System.out.println(book.getTitle());
@@ -234,7 +233,7 @@ public class MySQL implements BooksDbInterface {
 
                     ArrayList<Author> authors = getAuthors(isbn);
                     ArrayList<Review> reviews = getBookReviews(isbn);
-                    Book book = new Book(isbn, title, genre, foundRating,reviews);
+                    Book book = new Book(isbn, title, genre, foundRating,reviews,customer.getCustomerId());
                     book.setAuthors(authors);
                     result.add(book);
                 }
@@ -277,7 +276,7 @@ public class MySQL implements BooksDbInterface {
 
                 ArrayList<Author> authors = getAuthors(isbn);
                 ArrayList<Review> reviews = getBookReviews(isbn);
-                Book book = new Book(isbn, title, genre,avgRating,reviews);
+                Book book = new Book(isbn, title, genre,avgRating,reviews,customer.getCustomerId());
                 book.setAuthors(authors);
                 result.add(book);
             }
@@ -411,12 +410,13 @@ public class MySQL implements BooksDbInterface {
     	ResultSet authorRs;
     	try {
     		con.setAutoCommit(false);
-	        String insertBook = "INSERT INTO T_Book VALUES(?,?,?)";	
+	        String insertBook = "INSERT INTO T_Book VALUES(?,?,?,?)";	
 	        bookPreStmt = con.prepareStatement(insertBook);
 	        bookPreStmt.clearParameters();
 	        bookPreStmt.setString(1, isbn);
 	        bookPreStmt.setString(2, genre);
 	        bookPreStmt.setString(3, title);
+	        bookPreStmt.setInt(4, customer.getCustomerId());
 	        bookPreStmt.executeUpdate();
 	        
 	        String authors[] = authorName.split(",");
@@ -488,6 +488,28 @@ public class MySQL implements BooksDbInterface {
         }
         finally{
             preStmt.close();
+        }
+    }
+    
+
+    @Override
+    public void removeBookByIsbn(String isbn) throws IOException, SQLException {
+
+        String removeRequest = "DELETE FROM t_book WHERE isbn = ?";
+        PreparedStatement removeStmt = con.prepareStatement(removeRequest);
+        try {
+            removeStmt.clearParameters();
+            removeStmt.setString(1,isbn);
+            removeStmt.executeUpdate();
+            String removeFromMadeRequest = "DELETE FROM t_made WHERE isbn = ?";
+            removeStmt = con.prepareStatement(removeFromMadeRequest);
+            removeStmt.clearParameters();
+            removeStmt.setString(1,isbn);
+            removeStmt.executeUpdate();
+
+        }
+        finally{
+            removeStmt.close();
         }
     }
 

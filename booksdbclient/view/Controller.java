@@ -231,12 +231,20 @@ public class Controller {
 		@Override
 		public void run() {
 			try {
-				booksDb.addReview(isbn, genre, title, authors);
+				booksDb.insertNewBook(isbn, genre, title, authors);
 			} catch (IOException | SQLException e) {
+				System.out.println(e);
 				Platform.runLater(new Runnable() {
             	    @Override
             	    public void run() {
             	    	booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+            	    }
+            	});
+			}catch(NullPointerException e) {
+				Platform.runLater(new Runnable() {
+            	    @Override
+            	    public void run() {
+            	    	booksView.showAlertAndWait("Not Connected to the database or not loged in",ERROR);
             	    }
             	});
 			}
@@ -272,6 +280,13 @@ public class Controller {
             	    @Override
             	    public void run() {
             	    	booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+            	    }
+            	});
+			}catch(NullPointerException e) {
+				Platform.runLater(new Runnable() {
+            	    @Override
+            	    public void run() {
+            	    	booksView.showAlertAndWait("Not Connected to the database",ERROR);
             	    }
             	});
 			}
@@ -325,6 +340,35 @@ public class Controller {
 			}
 		}
     }
+	
+	public void removeBookSelected(){
+        booksView.removeBookWindow(this);
+    }
+    public void removeBookSubmit(String isbn) throws IOException, SQLException{
+    	Thread thread = new Thread(new RemoveBooks(isbn));
+		thread.start();
+    }
+	private class RemoveBooks implements Runnable{
+
+    	private String isbnToRemove;
+		public RemoveBooks(String isbnToRemove) {
+			this.isbnToRemove = isbnToRemove;
+		}
+		@Override
+		public void run() {
+			try {
+				booksDb.removeBookByIsbn(isbnToRemove);
+			} catch (IOException | SQLException e) {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						booksView.showAlertAndWait("Database error."+e.getMessage(),ERROR);
+					}
+				});
+			}
+		}
+	}
+	
 	public void onLogInSelect(){
     	booksView.logInWindow(this);
 	}
