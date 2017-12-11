@@ -77,11 +77,11 @@ public class MySQL implements BooksDbInterface {
 
                 float avgRating = getAvgRating(isbn);
 
-                    ArrayList<Author> authors = getAuthors(isbn);
-                    ArrayList<Review> reviews = getBookReviews(isbn);
-                    Book book = new Book(isbn, title, genre,avgRating,reviews);
-                    book.setAuthors(authors);
-                    result.add(book);
+                ArrayList<Author> authors = getAuthors(isbn);
+                ArrayList<Review> reviews = getBookReviews(isbn);
+                Book book = new Book(isbn, title, genre,avgRating,reviews);
+                book.setAuthors(authors);
+                result.add(book);
             }
         }
         finally {
@@ -426,8 +426,7 @@ public class MySQL implements BooksDbInterface {
 	             if(!authorRs.next()) {
 	            	System.out.println("adding new author");
 	             	
-	            	//AuthorInserter authorInsert = new AuthorInserter(authors[i],con);
-	            	//authorInsert.run();
+	            	insertNewAuthor(authors[i]);
 	             	authorPreStmt.clearParameters();
 	                authorPreStmt.setString(1, authors[i]);
 	                authorRs = authorPreStmt.executeQuery(); //getting authorId for next insert since we made a new one
