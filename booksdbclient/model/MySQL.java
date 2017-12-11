@@ -235,7 +235,7 @@ public class MySQL implements BooksDbInterface {
 
                     String title = bookRs.getString("title");
                     String genre = bookRs.getString("genre");
-                    int customerID = rs.getInt("customerID");
+                    int customerID = bookRs.getInt("customerID");
 
                     ArrayList<Author> authors = getAuthors(isbn);
                     ArrayList<Review> reviews = getBookReviews(isbn);
