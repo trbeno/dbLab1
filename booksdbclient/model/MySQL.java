@@ -161,7 +161,7 @@ public class MySQL implements BooksDbInterface {
                 Author author = new Author(name);
                 authors.add(author);
 
-                String selectBooksSQL ="SELECT * FROM T_Book INNER JOIN t_made ON T_Book.isbn = t_made.isbn WHERE T_made.authorID = ?";
+                String selectBooksSQL ="SELECT * FROM T_Book INNER JOIN T_Made ON T_Book.isbn = T_Made.isbn WHERE T_Made.authorID = ?";
                 booksPreStmt = con.prepareStatement(selectBooksSQL);
                 booksPreStmt.clearParameters();
                 booksPreStmt.setString(1,authorID);
@@ -303,7 +303,7 @@ public class MySQL implements BooksDbInterface {
 
         try {
             String selectAuthorSQL =
-                    "SELECT name FROM T_Author INNER JOIN t_made ON T_Author.authorID = t_made.authorID WHERE isbn = ?";
+                    "SELECT name FROM T_Author INNER JOIN T_Made ON T_Author.authorID = T_Made.authorID WHERE isbn = ?";
             authorPreStmt = con.prepareStatement(selectAuthorSQL);
             authorPreStmt.clearParameters();
             authorPreStmt.setString(1, isbn);
@@ -495,13 +495,13 @@ public class MySQL implements BooksDbInterface {
     @Override
     public void removeBookByIsbn(String isbn) throws IOException, SQLException {
 
-        String removeRequest = "DELETE FROM t_book WHERE isbn = ?";
+        String removeRequest = "DELETE FROM T_Book WHERE isbn = ?";
         PreparedStatement removeStmt = con.prepareStatement(removeRequest);
         try {
             removeStmt.clearParameters();
             removeStmt.setString(1,isbn);
             removeStmt.executeUpdate();
-            String removeFromMadeRequest = "DELETE FROM t_made WHERE isbn = ?";
+            String removeFromMadeRequest = "DELETE FROM T_Made WHERE isbn = ?";
             removeStmt = con.prepareStatement(removeFromMadeRequest);
             removeStmt.clearParameters();
             removeStmt.setString(1,isbn);
