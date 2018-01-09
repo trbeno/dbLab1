@@ -1,6 +1,7 @@
 package booksdbclient;
 
 import booksdbclient.model.MySQL;
+import booksdbclient.model.MongoDB;
 import booksdbclient.view.BooksPane;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -16,7 +17,7 @@ public class BooksDbClientMain extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        MySQL booksDb = new MySQL(); // model
+        MongoDB booksDb = new MongoDB(); // model
 
         BooksPane root = new BooksPane(booksDb);
 

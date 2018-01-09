@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.mongodb.MongoException;
+
 /**
  * This interface declares methods for querying a Books database.
  * Different implementations of this interface handles the connection and
@@ -19,7 +21,7 @@ public interface BooksDbInterface {
      * @param database, userName, passWord
      * @return true on successful connection.
      */
-    public boolean connect(String database, String userName, String passWord) throws IOException, SQLException;
+    public boolean connect(String database, String userName, String passWord) throws IOException, SQLException, MongoException;
     /**
      * Disconnects from the database.
      */
@@ -84,7 +86,7 @@ public interface BooksDbInterface {
      * @throws IOException
      * @throws SQLException
      */
-    public void addCustomer (String name, String address, String userName, String password) throws IOException, SQLException;
+    public void addCustomer (String name, String address, String userName, String password) throws IOException, SQLException, MongoException;
     /**
      * Function that logs into an account. 
      * @param userName
