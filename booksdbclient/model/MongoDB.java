@@ -31,19 +31,9 @@ public class MongoDB implements BooksDbInterface {
 	public boolean connect(String database, String userName, String passWord) throws IOException, MongoException{
 		 // Creating a Mongo client
 
-        //MongoClientURI uri = new MongoClientURI("mongodb://libraryClient:pot@localhost:27017/?authSource=library");
-        //mongo= new MongoClient(uri);
-
-		mongo = new MongoClient("127.0.0.1",27017);
+        MongoClientURI uri = new MongoClientURI("mongodb://libraryClient:pot@localhost:27017/?authSource=library");
+        mongo= new MongoClient(uri);
 		db = mongo.getDatabase("library");
-
-        //MongoCredential credential = MongoCredential.createCredential("libraryClient", "library","pot".toCharArray() );
-        //mongo = new MongoClient(new ServerAddress("localhost", 27017), Arrays.asList(credential));
-        //db = mongo.getDatabase("library");
-
-        //mongo = new MongoClient("127.0.0.1",27017);
-        //mongo = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
-		//db = mongo.getDatabase("library");
 
 		System.out.println("Connected to the database successfully");  
 		return true;
