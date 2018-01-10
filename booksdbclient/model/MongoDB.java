@@ -167,8 +167,6 @@ public class MongoDB implements BooksDbInterface {
 
 	    coll.updateOne(eq("isbn",isbn),set("authorName",updateAuthorName));
 
-
-
 	}
 
 	@Override
@@ -221,8 +219,11 @@ public class MongoDB implements BooksDbInterface {
 
 	@Override
 	public void removeBookByIsbn(String isbn) throws IOException, SQLException {
-		// TODO Auto-generated method stub
-		
+        MongoCollection<Document> coll = db.getCollection("book");
+        BasicDBObject query =  new BasicDBObject();
+        query.put("isbn",isbn);
+        coll.findOneAndDelete(query);
+
 	}
 
 	@Override
