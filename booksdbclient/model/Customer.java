@@ -3,6 +3,7 @@ package booksdbclient.model;
 public class Customer {
 
     private int customerId;
+    private String customerOId;
     private String name;
     private String address;
     private String username;
@@ -15,8 +16,24 @@ public class Customer {
         this.username = username;
         this.password = password;
     }
+    
+    public Customer(String customerOId, String name, String address, String username, String password) {
+        this.customerOId = customerOId;
+        this.name = name;
+        this.address = address;
+        this.username = username;
+        this.password = password;
+    }
 
-    public int getCustomerId() {
+    public String getCustomerOId() {
+		return customerOId;
+	}
+
+	public void setCustomerOId(String customerOId) {
+		this.customerOId = customerOId;
+	}
+
+	public int getCustomerId() {
         return customerId;
     }
     public void setCustomerId(int customerId) {
@@ -51,6 +68,7 @@ public class Customer {
     public String toString() {
         return "Customer{" +
                 "customerId=" + customerId +
+                ", OId='" + customerOId + '\'' +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", username='" + username + '\'' +

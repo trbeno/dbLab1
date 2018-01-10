@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.print.Doc;
+
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
@@ -30,6 +32,7 @@ import com.mongodb.client.result.UpdateResult;
 public class MongoDB implements BooksDbInterface {
 	private MongoClient mongo = null;
 	private MongoDatabase db = null;
+	private Customer customer = null;
 	@Override
 	public boolean connect(String database, String userName, String passWord) throws IOException, SQLException, MongoException{
 		 // Creating a Mongo client 
@@ -120,11 +123,16 @@ public class MongoDB implements BooksDbInterface {
 		boolean failOrAccept = false;
          try{
         	 MongoCollection<Document> collection = db.getCollection("customer");
-        	 System.out.println(collection.find(and(eq("userName",userName),eq("password",password))).first());
-               failOrAccept = true;
+        	 Document doc = collection.find(and(eq("userName",userName),eq("password",password))).first();
+             String customerOID = doc.get("_id").toString();
+             System.out.println(customerOID);
+             String name = doc.getString("name");
+             String adress = doc.getString("adress");
+             customer = new Customer(customerOID,name,adress,userName,password);
+        	 failOrAccept = true;
            }finally {
-        	//if(customer != null) System.out.println(customer.toString());
         }
+         System.out.println(customer);
          return failOrAccept;
         
 	}
