@@ -8,7 +8,7 @@ import java.util.List;
 
 
 import com.mongodb.MongoClient;
-
+import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 
 
@@ -40,22 +40,18 @@ public class MongoDB implements BooksDbInterface {
 	@Override
 	public boolean connect(String database, String userName, String passWord) throws IOException, SQLException, MongoException{
 		 // Creating a Mongo client 
-		mongo = new MongoClient("127.0.0.1",27017);
-		db = mongo.getDatabase("library");  
+		MongoClientURI uri = new MongoClientURI("mongodb://libraryClient:terror@localhost:27017/?authSource=test");
+		MongoClient mongoClient = new MongoClient(uri);
+		db = mongoClient.getDatabase("library");  
 		System.out.println("Connected to the database successfully");  
 		return true;
 	}
-	private Block<Document> printBlock = new Block<Document>() {
-        public void apply(final Document document) {
-			List<Book> result = new ArrayList<>();
-
-
-        }
-    };
 	@Override
 	public void disconnect() throws IOException, SQLException {
-		// TODO Auto-generated method stub
-		
+		if(mongo!= null && db!= null) {
+			mongo.close();
+			
+		}
 	}
 
 	@Override
@@ -167,7 +163,7 @@ public class MongoDB implements BooksDbInterface {
             updateAuthorName = doc.getString("authorName");
         }
         updateAuthorName = updateAuthorName +", " +authorName;
-
+        
 	    coll.updateOne(eq("isbn",isbn),set("authorName",updateAuthorName));
 
 	}
