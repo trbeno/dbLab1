@@ -14,9 +14,16 @@ import com.mongodb.MongoException;
 import com.mongodb.ServerAddress;
 
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.BsonField;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 
+import org.bson.BsonDocument;
+import org.bson.BsonString;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -129,9 +136,13 @@ public class MongoDB implements BooksDbInterface {
 
         try {
             MongoCollection<Document> collection = db.getCollection("review");
-            //Document doc = collection.find();
-        	//String askForAvgRatingSQL = "SELECT AVG(rating) FROM t_review WHERE isbn = ?";
-        	
+            AggregateIterable<Document> docs = collection.aggregate(
+            	      Arrays.asList(
+            	              Aggregates.match(Filters.eq("isbn", isbn)),
+            	              Aggregates.group(null, Accumulators.avg("rating", "$rating"))
+            	      )
+            	);
+            avgRating = docs.first().getDouble("rating").floatValue();
         }finally {
         }
         return avgRating;
@@ -148,7 +159,7 @@ public class MongoDB implements BooksDbInterface {
 			throws IOException, SQLException, MongoException {
 
 		MongoCollection<Document> collection = db.getCollection("customer");
-		Document doc = new Document("name",name).append("password", password).append("userName", userName).append("address", address);
+		Document doc = new Document("name",name).append("password", password).append("userName", userName).append("adress", address);
 		collection.insertOne(doc);
 		
 	}
