@@ -1,30 +1,26 @@
 package booksdbclient.model;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.print.Doc;
+
 
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
+
 import com.mongodb.MongoException;
-import com.mongodb.ServerAddress;
+
 
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
-import com.mongodb.client.model.BsonField;
+
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 
-import org.bson.BsonDocument;
-import org.bson.BsonString;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -33,13 +29,8 @@ import java.util.Date;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.client.MongoCursor;
 import static com.mongodb.client.model.Filters.*;
-import com.mongodb.client.result.DeleteResult;
-import static com.mongodb.client.model.Updates.*;
-import com.mongodb.client.result.UpdateResult;
+
 
 public class MongoDB implements BooksDbInterface {
 	private MongoClient mongo = null;
@@ -116,8 +107,17 @@ public class MongoDB implements BooksDbInterface {
 
 	@Override
 	public List<Book> searchBooksByRating(String searchFor) throws IOException, SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		List<Book> result = new ArrayList<>();
+		MongoCollection<Document> coll = db.getCollection("review");
+        AggregateIterable<Document> docs = coll.aggregate(
+        	      Arrays.asList(
+        	              Aggregates.group("$isbn", Accumulators.avg("rating", "$rating"))
+        	      )
+        	);
+        for(Document doc: docs) {
+        	result.addAll(searchBooksByISBN(doc.getString("_id"))) ;
+        }
+		return result;
 	}
 
 	@Override
@@ -178,8 +178,8 @@ public class MongoDB implements BooksDbInterface {
         ArrayList<Review> reviews = new ArrayList<Review>();
         
         try{
-    		MongoCollection<Document> collection = db.getCollection("review");
-    		FindIterable<Document> docs = collection.find(eq("isbn",isbn));
+    		MongoCollection<Document> coll = db.getCollection("review");
+    		FindIterable<Document> docs = coll.find(eq("isbn",isbn));
     		for(Document doc: docs) {
     			String reviewerId = doc.getString("customerOID");
     			Double rating =doc.getDouble("rating");
@@ -195,8 +195,8 @@ public class MongoDB implements BooksDbInterface {
         float avgRating = 0;
 
         try {
-            MongoCollection<Document> collection = db.getCollection("review");
-            AggregateIterable<Document> docs = collection.aggregate(
+            MongoCollection<Document> coll = db.getCollection("review");
+            AggregateIterable<Document> docs = coll.aggregate(
             	      Arrays.asList(
             	              Aggregates.match(Filters.eq("isbn", isbn)),
             	              Aggregates.group(null, Accumulators.avg("rating", "$rating"))
@@ -218,9 +218,9 @@ public class MongoDB implements BooksDbInterface {
 	public void addCustomer(String name, String address, String userName, String password)
 			throws IOException, SQLException, MongoException {
 
-		MongoCollection<Document> collection = db.getCollection("customer");
+		MongoCollection<Document> coll = db.getCollection("customer");
 		Document doc = new Document("name",name).append("password", password).append("userName", userName).append("adress", address);
-		collection.insertOne(doc);
+		coll.insertOne(doc);
 		
 	}
 
@@ -228,8 +228,8 @@ public class MongoDB implements BooksDbInterface {
 	public boolean loginAttempt(String userName, String password) throws IOException, SQLException {
 		boolean failOrAccept = false;
          try{
-        	 MongoCollection<Document> collection = db.getCollection("customer");
-        	 Document doc = collection.find(and(eq("userName",userName),eq("password",password))).first();
+        	 MongoCollection<Document> coll = db.getCollection("customer");
+        	 Document doc = coll.find(and(eq("userName",userName),eq("password",password))).first();
              String customerOID = doc.get("_id").toString();
              System.out.println(customerOID);
              String name = doc.getString("name");
