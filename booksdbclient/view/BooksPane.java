@@ -341,6 +341,15 @@ public class BooksPane extends VBox {
                 	alert.showAndWait();
                 	e.printStackTrace();
                 }
+                catch (NumberFormatException e) {
+                	Alert alert = new Alert(AlertType.INFORMATION);
+                	alert.setTitle("Error");
+                	alert.setHeaderText("Could not Insert rating");
+                	alert.setContentText("Enter a number 0-5");
+                	alert.showAndWait();
+
+                }
+                
             }
         });
 
