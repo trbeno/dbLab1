@@ -136,7 +136,7 @@ public class MongoDB implements BooksDbInterface {
         return result;
     }
 
-	private Book makeBook(Document doc){
+	private Book makeBook(Document doc) throws  IOException, SQLException{
         String title = doc.getString("title");
         String authorList = doc.getString("authorName");
         String isbn = doc.getString("isbn");
@@ -148,22 +148,35 @@ public class MongoDB implements BooksDbInterface {
             Author author = new Author(authorListSplit[i]);
             authors.add(author);
         }
-        ArrayList<Review> reviews = new ArrayList();
-        Book book = new Book(isbn, title, genre,1,reviews,1);
+
+        Book book = new Book(isbn, title, genre,1,getBookReviews(isbn),1);
         book.setAuthors(authors);
         return book;
     }
 
 	@Override
-	public void insertNewAuthor(String authorName) throws IOException, SQLException {
-		// TODO Auto-generated method stub
-		
+	public void insertNewAuthor(String authorName, String isbn) throws IOException, SQLException {
+	    String updateAuthorName = null;
+
+	    MongoCollection<Document> coll = db.getCollection("book");
+	    BasicDBObject query =  new BasicDBObject();
+	    query.put("isbn",isbn);
+        FindIterable<Document> docs = coll.find(query);
+        for(Document doc : docs) {
+            updateAuthorName = doc.getString("authorName");
+        }
+        updateAuthorName = updateAuthorName +", " +authorName;
+
+	    coll.updateOne(eq("isbn",isbn),set("authorName",updateAuthorName));
+
 	}
 
 	@Override
 	public void insertNewBook(String isbn, String genre, String title, String authorName) throws IOException, SQLException {
-        MongoCollection<Document> coll = db.getCollection("book");
-        coll.insertOne(new Document("isbn",isbn).append("genre",genre).append("title",title).append("authorName",authorName));
+	    if(customer == null) throw new NullPointerException() ;
+            MongoCollection<Document> coll = db.getCollection("book");
+            coll.insertOne(new Document("isbn", isbn).append("genre", genre)
+                    .append("title", title).append("authorName", authorName).append("customerId",customer.getCustomerId()));
 	}
 
 	@Override
@@ -182,10 +195,10 @@ public class MongoDB implements BooksDbInterface {
     		FindIterable<Document> docs = coll.find(eq("isbn",isbn));
     		for(Document doc: docs) {
     			String reviewerId = doc.getString("customerOID");
-    			Double rating =doc.getDouble("rating");
+    			int rating = doc.getInteger("rating");
     			Date date = doc.getDate("date");
     			String review = doc.getString("text");
-    			reviews.add(new Review(review,rating.floatValue(),date,reviewerId));
+    			reviews.add(new Review(review,rating,date,reviewerId));
     		}
         }finally {
         }
@@ -210,8 +223,11 @@ public class MongoDB implements BooksDbInterface {
 
 	@Override
 	public void removeBookByIsbn(String isbn) throws IOException, SQLException {
-		// TODO Auto-generated method stub
-		
+        MongoCollection<Document> coll = db.getCollection("book");
+        BasicDBObject query =  new BasicDBObject();
+        query.put("isbn",isbn);
+        coll.findOneAndDelete(query);
+
 	}
 
 	@Override

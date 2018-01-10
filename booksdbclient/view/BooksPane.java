@@ -1,5 +1,6 @@
 package booksdbclient.view;
 
+import booksdbclient.model.MongoDB;
 import booksdbclient.model.SearchMode;
 import booksdbclient.model.Book;
 import booksdbclient.model.MySQL;
@@ -50,7 +51,7 @@ public class BooksPane extends VBox {
     private Button searchButton;
     private MenuBar menuBar;
 
-    public BooksPane(MySQL booksDb) {
+    public BooksPane(MongoDB booksDb) {
         final Controller controller = new Controller(booksDb, this);
         this.init(controller);
     }
@@ -263,6 +264,10 @@ public class BooksPane extends VBox {
 		 final TextField authorField = new TextField();
 		 final Label authorLabel = new Label("Enter Author name:");
 	     authorField.setPromptText("Author name:");
+
+        final TextField isbnField = new TextField();
+        final Label isbnLabel = new Label("Enter Author name:");
+        authorField.setPromptText("Author name:");
 		 
 	     Button submitBtn = new Button();
 		 submitBtn.setText("Submit");
@@ -271,8 +276,9 @@ public class BooksPane extends VBox {
 			public void handle(ActionEvent event) {
 			   try {
 				   String authorName = authorField.getText();
+				   String isbn = isbnField.getText();
 				   System.out.println(authorName);
-				   controller.onNewAuthorSubmit(authorName);
+				   controller.onNewAuthorSubmit(authorName,isbn);
 				   dialog.close();
 			} catch (IOException | SQLException e) {
 				// TODO Auto-generated catch block
@@ -281,7 +287,7 @@ public class BooksPane extends VBox {
 			}
          });
 
-		 dialogVbox.getChildren().addAll(authorLabel,authorField,submitBtn);
+		 dialogVbox.getChildren().addAll(authorLabel,authorField,isbnLabel,isbnField,submitBtn);
 		 Scene dialogScene = new Scene(dialogVbox, 300, 200);
 		 dialog.setScene(dialogScene);
 		 dialog.show();
@@ -377,6 +383,7 @@ public class BooksPane extends VBox {
                     String authors = authorsField.getText();
 
                     controller.onNewBookSubmit(isbn,genre,title,authors);
+                    dialog.close();
                 } catch (IOException | SQLException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

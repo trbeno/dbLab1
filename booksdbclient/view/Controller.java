@@ -162,13 +162,15 @@ public class Controller {
 	private class AuthorInserter implements Runnable {
 
 			private String authorName;
-			public AuthorInserter(String authorName) {
+			private String isbn;
+			public AuthorInserter(String authorName,String isbn) {
 				this.authorName=authorName;
+				this.isbn = isbn;
 			}
 			@Override
 			public void run() {
 				try {
-					booksDb.insertNewAuthor(authorName);
+					booksDb.insertNewAuthor(authorName,isbn);
 				} catch (IOException | SQLException e) {
 					Platform.runLater(new Runnable() {
 	            	    @Override
@@ -179,9 +181,9 @@ public class Controller {
 				}
 			}
 	 }
-    public void onNewAuthorSubmit(String authorName) throws IOException, SQLException{
+    public void onNewAuthorSubmit(String authorName, String isbn) throws IOException, SQLException{
     	if(!"".equals(authorName)) {
-    		Thread thread = new Thread(new AuthorInserter(authorName));
+    		Thread thread = new Thread(new AuthorInserter(authorName,isbn));
     		thread.start();
     	}
 
@@ -243,7 +245,7 @@ public class Controller {
 				Platform.runLater(new Runnable() {
             	    @Override
             	    public void run() {
-            	    	booksView.showAlertAndWait("Not Connected to the database or not loged in",ERROR);
+            	    	booksView.showAlertAndWait("Not Connected to the database or not logged in",ERROR);
             	    }
             	});
 			}
