@@ -1,7 +1,7 @@
 package booksdbclient.model;
 
 import java.io.IOException;
-import java.sql.SQLException;
+
 import java.util.List;
 
 import com.mongodb.MongoException;
@@ -19,61 +19,61 @@ public interface BooksDbInterface {
      * @param database, userName, passWord
      * @return true on successful connection.
      */
-    public boolean connect(String database, String userName, String passWord) throws IOException, SQLException, MongoException;
+    public boolean connect(String database, String userName, String passWord) throws IOException, MongoException, MongoException;
     /**
      * Disconnects from the database.
      */
-    public void disconnect() throws IOException, SQLException;
+    public void disconnect() throws IOException, MongoException;
     /**
      * Search for all books with a string in its title.
      * @param title
      * @return List of books that matches query.
      */
-    public List<Book> searchBooksByTitle(String title) throws IOException, SQLException;
+    public List<Book> searchBooksByTitle(String title) throws IOException, MongoException;
     /**
      * Search for all books with a specific isnb.
      * @param searchISBN
      * @return List of books that matches query.
      */
-    public List<Book> searchBooksByISBN(String searchISBN) throws IOException, SQLException;
+    public List<Book> searchBooksByISBN(String searchISBN) throws IOException, MongoException;
     /**
      * Search for all books with a specific author.
      * @param searchAuthor
      * @return List of books that matches query.
      */
-    public List<Book> searchBooksByAuthor(String searchAuthor) throws IOException, SQLException;
+    public List<Book> searchBooksByAuthor(String searchAuthor) throws IOException, MongoException;
     /**
      * Search for all books with the rating specified.
      * @param searchFor
      * @return List of books that matches query.
      */
-    public List<Book> searchBooksByRating(String searchFor) throws IOException, SQLException;
+    public List<Book> searchBooksByRating(String searchFor) throws IOException, MongoException;
     /**
      * Search for all books with a specified genre.
      * @param searchGenre
      * @return List of books that matches query.
      */
-    public List<Book> searchBooksByGenre(String searchGenre) throws IOException, SQLException;
+    public List<Book> searchBooksByGenre(String searchGenre) throws IOException, MongoException;
     /**
      * Creates a new author and inserts it into the database
      * @param authorName
      */
-    public void insertNewAuthor(String authorName, String isbn)throws IOException, SQLException;
+    public void insertNewAuthor(String authorName, String isbn)throws IOException, MongoException;
     /**
      * Creates a new book and inserts it into the database
      * @param isbn,genre,title authorName
      */
-    public void insertNewBook(String isbn, String genre,String title, String authorName)throws IOException, SQLException;
+    public void insertNewBook(String isbn, String genre,String title, String authorName)throws IOException, MongoException;
     /**
      * Adds a review with a rating to a book
      * @param userID, isbn, rating, text
      */
-    public void addReview( String isbn, String rating, String text) throws IOException, SQLException;
+    public void addReview( String isbn, String rating, String text) throws IOException, MongoException;
     /**
      * Removes a book that matches an isbn number
      * @param  isbn: the isbn number to be used
      */
-    public void removeBookByIsbn(String isbn) throws IOException, SQLException;
+    public void removeBookByIsbn(String isbn) throws IOException, MongoException;
     /**
      * Function to add a customer to the database, equivalent to signup or similar
      * @param name
@@ -81,18 +81,18 @@ public interface BooksDbInterface {
      * @param userName
      * @param password
      * @throws IOException
-     * @throws SQLException
+     * @throws MongoException
      */
-    public void addCustomer (String name, String address, String userName, String password) throws IOException, SQLException, MongoException;
+    public void addCustomer (String name, String address, String userName, String password) throws IOException, MongoException;
     /**
      * Function that logs into an account. 
      * @param userName
      * @param password
      * @return true on Success
      * @throws IOException
-     * @throws SQLException
+     * @throws MongoException
      */
-    public boolean loginAttempt (String userName, String password) throws IOException, SQLException;
+    public boolean loginAttempt (String userName, String password) throws IOException, MongoException;
 
     public void logOut();
 

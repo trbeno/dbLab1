@@ -6,7 +6,8 @@ import booksdbclient.model.Book;
 import booksdbclient.model.MySQL;
 
 import java.io.IOException;
-import java.sql.SQLException;
+import com.mongodb.MongoException;
+
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -172,8 +173,7 @@ public class BooksPane extends VBox {
             public void handle(ActionEvent t) {
                 try {
                     controller.onConnectSelected();
-                } catch (IOException | SQLException e) {
-                    // TODO Auto-generated catch block
+                } catch (IOException | MongoException e) {
                     e.printStackTrace();
                 }
             }
@@ -280,7 +280,7 @@ public class BooksPane extends VBox {
 				   System.out.println(authorName);
 				   controller.onNewAuthorSubmit(authorName,isbn);
 				   dialog.close();
-			} catch (IOException | SQLException e) {
+			} catch (IOException | MongoException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -332,7 +332,7 @@ public class BooksPane extends VBox {
                     controller.oneNewRatingSubmit(isbn,rating,reviw);
                     dialog.close();
                     
-                } catch (IOException | SQLException e) {
+                } catch (IOException | MongoException e) {
                 	Alert alert = new Alert(AlertType.INFORMATION);
                 	alert.setTitle("Error");
                 	alert.setHeaderText("Could not Insert Author");
@@ -384,7 +384,7 @@ public class BooksPane extends VBox {
 
                     controller.onNewBookSubmit(isbn,genre,title,authors);
                     dialog.close();
-                } catch (IOException | SQLException e) {
+                } catch (IOException | MongoException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
@@ -437,7 +437,7 @@ public class BooksPane extends VBox {
                     String customerPassword = passwordField.getText();
                     controller.onNewCustomerSubmit(customerName,customerAdress,customerUsername,customerPassword);
                     dialog.close();
-                } catch (IOException | SQLException e) {
+                } catch (IOException | MongoException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
@@ -471,7 +471,7 @@ public class BooksPane extends VBox {
                     String customerPassword = passwordField.getText();
                     controller.onLogInSubmit(customerUsername,customerPassword);
                     dialog.close();
-                } catch (IOException | SQLException e) {
+                } catch (IOException | MongoException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
@@ -500,7 +500,7 @@ public class BooksPane extends VBox {
 
                     controller.removeBookSubmit(isbnToRemove);
                     dialog.close();
-                } catch (IOException | SQLException e) {
+                } catch (IOException | MongoException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }

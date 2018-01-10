@@ -6,8 +6,8 @@ import booksdbclient.model.BooksDbInterface;
 
 import javafx.application.Platform;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
+import com.mongodb.MongoException;
 
 import static javafx.scene.control.Alert.AlertType.*;
 
@@ -93,7 +93,7 @@ public class Controller {
 	                	    }
 	                	});
 		            }
-		        } catch (SQLException|IOException e) {
+		        } catch (MongoException|IOException e) {
 		        	Platform.runLater(new Runnable() {
                 	    @Override
                 	    public void run() {
@@ -118,8 +118,8 @@ public class Controller {
 		@Override
 		public void run() {
 			try {
-				booksDb.connect("Library", "dbUser", "terror");
-			} catch (IOException | SQLException e) {
+				booksDb.connect("library", "libraryClient", "terror");
+			} catch (IOException | MongoException e) {
 				Platform.runLater(new Runnable() {
             	    @Override
             	    public void run() {
@@ -129,7 +129,7 @@ public class Controller {
 			}
 		}
     }
-    public void onConnectSelected() throws IOException, SQLException {
+    public void onConnectSelected() throws IOException, MongoException {
     	Thread thread = new Thread(new Connecter());
     	thread.start();
     }
@@ -141,7 +141,7 @@ public class Controller {
 		public void run() {
 			try {
 				booksDb.disconnect();
-			} catch (IOException | SQLException e) {
+			} catch (IOException | MongoException e) {
 				Platform.runLater(new Runnable() {
             	    @Override
             	    public void run() {
@@ -151,7 +151,7 @@ public class Controller {
 			}
 		}
     }
-    public void onDisconnectSelected() throws IOException, SQLException {
+    public void onDisconnectSelected() throws IOException, MongoException {
     	Thread thread = new Thread(new DisConnecter());
     	thread.start();
     }
@@ -171,7 +171,7 @@ public class Controller {
 			public void run() {
 				try {
 					booksDb.insertNewAuthor(authorName,isbn);
-				} catch (IOException | SQLException e) {
+				} catch (IOException | MongoException e) {
 					Platform.runLater(new Runnable() {
 	            	    @Override
 	            	    public void run() {
@@ -181,7 +181,7 @@ public class Controller {
 				}
 			}
 	 }
-    public void onNewAuthorSubmit(String authorName, String isbn) throws IOException, SQLException{
+    public void onNewAuthorSubmit(String authorName, String isbn) throws IOException, MongoException{
     	if(!"".equals(authorName)) {
     		Thread thread = new Thread(new AuthorInserter(authorName,isbn));
     		thread.start();
@@ -203,7 +203,7 @@ public class Controller {
 		public void run() {
 			try {
 				booksDb.addReview(isbn, rating, review);
-			} catch (IOException | SQLException e) {
+			} catch (IOException | MongoException e) {
 				Platform.runLater(new Runnable() {
             	    @Override
             	    public void run() {
@@ -213,7 +213,7 @@ public class Controller {
 			}
 		}
     }
-    public void oneNewRatingSubmit(String isbn, String rating, String review) throws IOException, SQLException{
+    public void oneNewRatingSubmit(String isbn, String rating, String review) throws IOException, MongoException{
         Thread thread = new Thread(new ReviewInserter(isbn,rating,review));
 		thread.start();
     }
@@ -233,7 +233,7 @@ public class Controller {
 		public void run() {
 			try {
 				booksDb.insertNewBook(isbn, genre, title, authors);
-			} catch (IOException | SQLException e) {
+			} catch (IOException | MongoException e) {
 				System.out.println(e);
 				Platform.runLater(new Runnable() {
             	    @Override
@@ -251,7 +251,7 @@ public class Controller {
 			}
 		}
     }
-    public void onNewBookSubmit(String isbn,String genre, String title,String authors) throws IOException, SQLException{
+    public void onNewBookSubmit(String isbn,String genre, String title,String authors) throws IOException, MongoException{
     	Thread thread = new Thread(new BookInserter(isbn, genre, title, authors));
 		thread.start();
     	
@@ -276,7 +276,7 @@ public class Controller {
 		public void run() {
 			try {
 				booksDb.addCustomer(name, address, userName, password);
-			} catch (IOException | SQLException e) {
+			} catch (IOException | MongoException e) {
 				Platform.runLater(new Runnable() {
             	    @Override
             	    public void run() {
@@ -293,7 +293,7 @@ public class Controller {
 			}
 		}
     }
-	public void onNewCustomerSubmit(String name, String address, String username, String password) throws IOException, SQLException{
+	public void onNewCustomerSubmit(String name, String address, String username, String password) throws IOException, MongoException{
     	Thread thread = new Thread(new UserInserter(name,address,username,password));
     	thread.start();
 	}
@@ -325,7 +325,7 @@ public class Controller {
 	            	    }
 	            	});
 				}
-			} catch (IOException | SQLException e) {
+			} catch (IOException | MongoException e) {
 				Platform.runLater(new Runnable() {
             	    @Override
             	    public void run() {
@@ -346,7 +346,7 @@ public class Controller {
 	public void removeBookSelected(){
         booksView.removeBookWindow(this);
     }
-    public void removeBookSubmit(String isbn) throws IOException, SQLException{
+    public void removeBookSubmit(String isbn) throws IOException, MongoException{
     	Thread thread = new Thread(new RemoveBooks(isbn));
 		thread.start();
     }
@@ -360,7 +360,7 @@ public class Controller {
 		public void run() {
 			try {
 				booksDb.removeBookByIsbn(isbnToRemove);
-			} catch (IOException | SQLException e) {
+			} catch (IOException | MongoException e) {
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
@@ -374,7 +374,7 @@ public class Controller {
 	public void onLogInSelect(){
     	booksView.logInWindow(this);
 	}
-	public void onLogInSubmit(String username, String password) throws IOException, SQLException{
+	public void onLogInSubmit(String username, String password) throws IOException, MongoException{
 		Thread thread = new Thread(new LogInManeger(username, password));
 		thread.start();
 	}
