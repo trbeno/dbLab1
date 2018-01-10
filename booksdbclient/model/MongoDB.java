@@ -31,9 +31,11 @@ public class MongoDB implements BooksDbInterface {
 	public boolean connect(String database, String userName, String passWord) throws IOException, SQLException, MongoException{
 		 // Creating a Mongo client
 
-        MongoClientURI uri = new MongoClientURI("mongodb://libraryClient:pot@localhost:27017/?authSource=library");
-        mongo= new MongoClient(uri);
-        db = mongo.getDatabase("library");
+        //MongoClientURI uri = new MongoClientURI("mongodb://libraryClient:pot@localhost:27017/?authSource=library");
+        //mongo= new MongoClient(uri);
+        
+		mongo = new MongoClient("127.0.0.1",27017);
+		db = mongo.getDatabase("library");
 
         //MongoCredential credential = MongoCredential.createCredential("libraryClient", "library","pot".toCharArray() );
         //mongo = new MongoClient(new ServerAddress("localhost", 27017), Arrays.asList(credential));
@@ -180,7 +182,7 @@ public class MongoDB implements BooksDbInterface {
 	    if(customer == null) throw new NullPointerException() ;
             MongoCollection<Document> coll = db.getCollection("book");
             coll.insertOne(new Document("isbn", isbn).append("genre", genre)
-                    .append("title", title).append("authorName", authorName).append("customerId",customer.getCustomerId()));
+                    .append("title", title).append("authorName", authorName).append("customerId",customer.getCustomerOId()));
 	}
 
 	@Override
@@ -221,8 +223,8 @@ public class MongoDB implements BooksDbInterface {
             	);
             avgRating = docs.first().getDouble("rating").floatValue();
         }finally {
+        	return avgRating;
         }
-        return avgRating;
     }
 
 	@Override
