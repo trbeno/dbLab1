@@ -11,11 +11,9 @@ import com.mongodb.MongoException;
  * Different implementations of this interface handles the connection and
  * queries to a specific DBMS and database, for example a MySQL or a MongoDB
  * database.
- * 
  * @author anderslm@kth.se
  */
 public interface BooksDbInterface {
-    
     /**
      * Connect to the database.
      * @param database, userName, passWord
@@ -26,7 +24,6 @@ public interface BooksDbInterface {
      * Disconnects from the database.
      */
     public void disconnect() throws IOException, SQLException;
-    
     /**
      * Search for all books with a string in its title.
      * @param title
@@ -61,7 +58,7 @@ public interface BooksDbInterface {
      * Creates a new author and inserts it into the database
      * @param authorName
      */
-    public void insertNewAuthor(String authorName)throws IOException, SQLException;
+    public void insertNewAuthor(String authorName, String isbn)throws IOException, SQLException;
     /**
      * Creates a new book and inserts it into the database
      * @param isbn,genre,title authorName

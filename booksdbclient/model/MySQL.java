@@ -22,6 +22,11 @@ public class MySQL implements BooksDbInterface {
     private Connection con = null;
     private Customer customer;
 
+    @Override
+    public void insertNewAuthor(String authorName, String isbn) throws IOException, SQLException {
+
+    }
+
     /**
      * Establishes a connection with the database
      * @param database name of the daabase, userName and the passWord: database (String), userName (String), passWord(String)
@@ -348,7 +353,7 @@ public class MySQL implements BooksDbInterface {
             String text = reviewRs.getString("review");
             float rating = reviewRs.getFloat("rating");
             Date date = reviewRs.getDate("reviewDate");
-            Review review = new Review(text, rating,date);
+            Review review = new Review(text, rating,date,"12");
             reviews.add(review);
             }
         }
@@ -390,7 +395,6 @@ public class MySQL implements BooksDbInterface {
      * @param authorName of the author (String)
      * @return returns the average rating
      */
-    @Override 
     public void insertNewAuthor(String authorName) throws IOException, SQLException{
     	String selectAuthorSQL ="INSERT INTO T_Author(name,customerID) values(?,?)";
     	PreparedStatement preStmt = con.prepareStatement(selectAuthorSQL);

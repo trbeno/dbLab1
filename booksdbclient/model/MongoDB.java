@@ -23,8 +23,6 @@ import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 
-import org.bson.BsonDocument;
-import org.bson.BsonString;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -155,9 +153,22 @@ public class MongoDB implements BooksDbInterface {
     }
 
 	@Override
-	public void insertNewAuthor(String authorName) throws IOException, SQLException {
-		// TODO Auto-generated method stub
-		
+	public void insertNewAuthor(String authorName, String isbn) throws IOException, SQLException {
+	    String updateAuthorName = null;
+
+	    MongoCollection<Document> coll = db.getCollection("book");
+	    BasicDBObject query =  new BasicDBObject();
+	    query.put("isbn",isbn);
+        FindIterable<Document> docs = coll.find(query);
+        for(Document doc : docs) {
+            updateAuthorName = doc.getString("authorName");
+        }
+        updateAuthorName = updateAuthorName +", " +authorName;
+
+	    coll.updateOne(eq("isbn",isbn),set("authorName",updateAuthorName));
+
+
+
 	}
 
 	@Override
