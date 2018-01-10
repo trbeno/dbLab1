@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.print.Doc;
@@ -32,6 +33,7 @@ import static com.mongodb.client.model.Filters.*;
 import com.mongodb.client.result.DeleteResult;
 import static com.mongodb.client.model.Updates.*;
 import com.mongodb.client.result.UpdateResult;
+
 public class MongoDB implements BooksDbInterface {
 	private MongoClient mongo = null;
 	private MongoDatabase db = null;
@@ -45,9 +47,10 @@ public class MongoDB implements BooksDbInterface {
 		return true;
 	}
 	private Block<Document> printBlock = new Block<Document>() {
-        @Override
         public void apply(final Document document) {
-            System.out.println(document.toJson());
+			List<Book> result = new ArrayList<>();
+
+
         }
     };
 	@Override
@@ -57,9 +60,35 @@ public class MongoDB implements BooksDbInterface {
 	}
 
 	@Override
-	public List<Book> searchBooksByTitle(String title) throws IOException, SQLException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Book> searchBooksByTitle(String searchTitle) throws IOException, SQLException {
+		List<Book> result = new ArrayList<>();
+		MongoCollection<Document> coll = db.getCollection("book");
+
+		BasicDBObject query = new BasicDBObject();
+		query.put("title", java.util.regex.Pattern.compile(searchTitle));
+        FindIterable<Document> docs = coll.find(query);
+
+        for(Document doc : docs) {
+            String title = doc.getString("title");
+            String authorList = doc.getString("authorName");
+            String isbn = doc.getString("isbn");
+            String genre = doc.getString("genre");
+
+            System.out.println(title);
+
+            String [] authorListSplit = authorList.split(",");
+            ArrayList<Author> authors = new ArrayList<>();
+            for(int i = 0; i < authorListSplit.length ; i++){
+                Author author = new Author(authorListSplit[i]);
+                authors.add(author);
+            }
+
+            ArrayList<Review> reviews = new ArrayList();
+            Book book = new Book(isbn, title, genre,1,reviews,1);
+            book.setAuthors(authors);
+            result.add(book);
+        }
+        return result;
 	}
 
 	@Override
@@ -93,10 +122,9 @@ public class MongoDB implements BooksDbInterface {
 	}
 
 	@Override
-	public void insertNewBook(String isbn, String genre, String title, String authorName)
-			throws IOException, SQLException {
-		// TODO Auto-generated method stub
-		
+	public void insertNewBook(String isbn, String genre, String title, String authorName) throws IOException, SQLException {
+        MongoCollection<Document> coll = db.getCollection("book");
+        coll.insertOne(new Document("isbn",isbn).append("genre",genre).append("title",title).append("authorName",authorName));
 	}
 
 	@Override
