@@ -582,4 +582,9 @@ public class MySQL implements BooksDbInterface {
         if(customer != null) System.out.println(customer.toString());
         return failOrAccept;
     }
+
+    @Override
+    public void logOut() {
+        customer = null;
+    }
 }
