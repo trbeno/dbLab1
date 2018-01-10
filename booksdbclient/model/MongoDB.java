@@ -33,7 +33,7 @@ public class MongoDB implements BooksDbInterface {
 
         //MongoClientURI uri = new MongoClientURI("mongodb://libraryClient:pot@localhost:27017/?authSource=library");
         //mongo= new MongoClient(uri);
-        
+
 		mongo = new MongoClient("127.0.0.1",27017);
 		db = mongo.getDatabase("library");
 
@@ -147,6 +147,7 @@ public class MongoDB implements BooksDbInterface {
         String authorList = doc.getString("authorName");
         String isbn = doc.getString("isbn");
         String genre = doc.getString("genre");
+        String OID = doc.getString("customerId");
 
         String [] authorListSplit = authorList.split(",");
         ArrayList<Author> authors = new ArrayList<>();
@@ -155,7 +156,7 @@ public class MongoDB implements BooksDbInterface {
             authors.add(author);
         }
 
-        Book book = new Book(isbn, title, genre,getAvgRating(isbn),getBookReviews(isbn),1);
+        Book book = new Book(isbn, title, genre,getAvgRating(isbn),getBookReviews(isbn),OID);
         book.setAuthors(authors);
         return book;
     }
@@ -264,5 +265,9 @@ public class MongoDB implements BooksDbInterface {
          return failOrAccept;
         
 	}
+	@Override
+	public void logOut(){
+	    customer = null;
+    }
 
 }

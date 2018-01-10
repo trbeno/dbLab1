@@ -18,6 +18,7 @@ public class Book {
     private ArrayList<Review> reviwList;
     private float  rating;
     private int customerID;
+    private String customerOID;
 
     public Book(int bookId, String isbn, String title,String genre) {
         this.bookId = bookId;
@@ -34,10 +35,23 @@ public class Book {
         this.setCustomerID(customerID);
     }
 
+    public Book(String isbn, String title, String genre,float rating,ArrayList<Review> reviews,String customerOID){
+        this.isbn = isbn;
+        this.title = title;
+        this.genre = genre;
+        this.rating = rating;
+        this.reviwList = reviews;
+        this.customerOID = customerOID;
+    }
+
+    public String getCustomerOID() {
+        return customerOID;}
+    public void setCustomerOID(String customerOID) {
+        this.customerOID = customerOID; }
+
     public void addReviw(Review review){
         this.reviwList.add(review);
     }
-
     public int getBookId() { return bookId; }
     public String getIsbn() { return isbn; }
     public String getTitle() { return title; }
@@ -49,14 +63,12 @@ public class Book {
     public void setAuthors (ArrayList<Author> authors) {
         this.authors = authors;
     }
-
     public float getRating() {
         return rating;
     }
     public void setRating(float rating) {
         this.rating = rating;
     }
-
     public String getAuthors() {
         String info="";
         for(Author a: authors)
@@ -66,7 +78,6 @@ public class Book {
     public String getGenre() {
         return genre;
     }
-
     public void setGenre(String genre) {
         this.genre = genre;
     }
@@ -82,7 +93,7 @@ public class Book {
         }
         builder.append(System.getProperty("line.separator"));
         builder.append("Average rating: ").append(this.rating);
-        builder.append(System.getProperty("line.separator")).append("Book added by: ").append(customerID);
+        builder.append(System.getProperty("line.separator")).append("Book added by: ").append(customerOID);
         builder.append(System.getProperty("line.separator"));
         for (int i = 0; i < reviwList.size() ; i++){
             builder.append(reviwList.get(i)).append(System.getProperty("line.separator"));

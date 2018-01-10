@@ -94,4 +94,6 @@ public interface BooksDbInterface {
      */
     public boolean loginAttempt (String userName, String password) throws IOException, SQLException;
 
+    public void logOut();
+
 }

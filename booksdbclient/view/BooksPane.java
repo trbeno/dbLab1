@@ -266,7 +266,7 @@ public class BooksPane extends VBox {
 	     authorField.setPromptText("Author name:");
 
         final TextField isbnField = new TextField();
-        final Label isbnLabel = new Label("Enter Author name:");
+        final Label isbnLabel = new Label("Enter Book ISBN:");
         authorField.setPromptText("Author name:");
 		 
 	     Button submitBtn = new Button();
