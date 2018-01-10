@@ -3,7 +3,7 @@ package booksdbclient.view;
 import booksdbclient.model.MongoDB;
 import booksdbclient.model.SearchMode;
 import booksdbclient.model.Book;
-import booksdbclient.model.MySQL;
+//import booksdbclient.model.MySQL;
 
 import java.io.IOException;
 import com.mongodb.MongoException;

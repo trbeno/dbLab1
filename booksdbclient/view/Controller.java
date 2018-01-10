@@ -118,7 +118,7 @@ public class Controller {
 		@Override
 		public void run() {
 			try {
-				booksDb.connect("library", "libraryClient", "terror");
+				booksDb.connect("library");
 			} catch (IOException | MongoException e) {
 				Platform.runLater(new Runnable() {
             	    @Override

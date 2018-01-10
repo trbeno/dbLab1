@@ -27,10 +27,17 @@ public class MongoDB implements BooksDbInterface {
 	private MongoClient mongo = null;
 	private MongoDatabase db = null;
 	private Customer customer = null;
-	@Override
-	public boolean connect(String database, String userName, String passWord) throws IOException, MongoException{
-		 // Creating a Mongo client
 
+    /**
+     * Connection to the DB via a libraryClient user
+     * @param database, userName, passWord
+     * @throws IOException
+     * @throws SQLException
+     * @throws MongoException
+     */
+	@Override
+	public boolean connect(String database) throws IOException, MongoException{
+		 // Creating a Mongo client
         MongoClientURI uri = new MongoClientURI("mongodb://libraryClient:pot@localhost:27017/?authSource=library");
         mongo= new MongoClient(uri);
 		db = mongo.getDatabase("library");
@@ -38,13 +45,12 @@ public class MongoDB implements BooksDbInterface {
 		System.out.println("Connected to the database successfully");  
 		return true;
 	}
-	private Block<Document> printBlock = new Block<Document>() {
-        public void apply(final Document document) {
-			List<Book> result = new ArrayList<>();
 
-
-        }
-    };
+    /**
+     * Disconnects the current connection to a DB
+     * @throws IOException
+     * @throws SQLException
+     */
 	@Override
 	public void disconnect() throws IOException, MongoException {
 		if(mongo!= null && db!= null) {
@@ -53,6 +59,13 @@ public class MongoDB implements BooksDbInterface {
 		}
 	}
 
+    /**
+     * search in the DB after books by the given title
+     * @param searchTitle
+     * @return
+     * @throws IOException
+     * @throws SQLException
+     */
 	@Override
 	public List<Book> searchBooksByTitle(String searchTitle) throws IOException, MongoException {
 		List<Book> result = new ArrayList<>();
@@ -69,6 +82,13 @@ public class MongoDB implements BooksDbInterface {
         return result;
 	}
 
+    /**
+     * search in the DB after books by the given ISBN
+     * @param searchISBN
+     * @return
+     * @throws IOException
+     * @throws SQLException
+     */
 	@Override
 	public List<Book> searchBooksByISBN(String searchISBN) throws IOException, MongoException {
         List<Book> result = new ArrayList<>();
@@ -85,6 +105,13 @@ public class MongoDB implements BooksDbInterface {
         return result;
     }
 
+    /**
+     * search in the DB after books by the given Author
+     * @param searchAuthor
+     * @return
+     * @throws IOException
+     * @throws SQLException
+     */
 	@Override
 	public List<Book> searchBooksByAuthor(String searchAuthor) throws IOException, MongoException {
         List<Book> result = new ArrayList<>();
@@ -101,6 +128,13 @@ public class MongoDB implements BooksDbInterface {
         return result;
     }
 
+    /**
+     * search in the DB after books by the given rating (averaged)
+     * @param searchFor
+     * @return
+     * @throws IOException
+     * @throws SQLException
+     */
 	@Override
 	public List<Book> searchBooksByRating(String searchFor) throws IOException, MongoException {
 		List<Book> result = new ArrayList<>();
@@ -116,6 +150,13 @@ public class MongoDB implements BooksDbInterface {
 		return result;
 	}
 
+    /**
+     * search in the DB after books by the given genre
+     * @param searchGenre
+     * @return
+     * @throws IOException
+     * @throws SQLException
+     */
 	@Override
 	public List<Book> searchBooksByGenre(String searchGenre) throws IOException, MongoException {
         List<Book> result = new ArrayList<>();
@@ -132,6 +173,13 @@ public class MongoDB implements BooksDbInterface {
         return result;
     }
 
+    /**
+     * A help method the create books for the search methods
+     * @param doc a document whit the information
+     * @return  returns a book object
+     * @throws IOException
+     * @throws SQLException
+     */
 	private Book makeBook(Document doc) throws  IOException, MongoException{
         String title = doc.getString("title");
         String authorList = doc.getString("authorName");
@@ -151,6 +199,13 @@ public class MongoDB implements BooksDbInterface {
         return book;
     }
 
+    /**
+     * Inserts a new Author to a existing book
+     * @param authorName
+     * @param isbn
+     * @throws IOException
+     * @throws SQLException
+     */
 	@Override
 	public void insertNewAuthor(String authorName, String isbn) throws IOException, MongoException {
 	    String updateAuthorName = null;
@@ -168,6 +223,15 @@ public class MongoDB implements BooksDbInterface {
 
 	}
 
+    /**
+     * Inserts a hole new book to the DB
+     * @param isbn,genre,title authorName the book inforamtion
+     * @param genre
+     * @param title
+     * @param authorName
+     * @throws IOException
+     * @throws SQLException
+     */
 	@Override
 	public void insertNewBook(String isbn, String genre, String title, String authorName) throws IOException, MongoException {
 	    if(customer == null) throw new NullPointerException() ;
@@ -176,6 +240,15 @@ public class MongoDB implements BooksDbInterface {
                     .append("title", title).append("authorName", authorName).append("customerId",customer.getCustomerOId()));
 	}
 
+    /**
+     * Add a review to a book by its ISBN
+     * @param isbn
+     * @param rating
+     * @param text
+     * @throws IOException
+     * @throws SQLException
+     * @throws MongoException
+     */
 	@Override
 	public void addReview(String isbn, String rating, String text) throws IOException, MongoException{
 		MongoCollection<Document> collection = db.getCollection("review");
@@ -184,9 +257,16 @@ public class MongoDB implements BooksDbInterface {
 		Document doc = new Document("isbn",isbn).append("customerOID", customer.getCustomerOId()).append("rating", Integer.parseInt(rating)).append("date", date).append("text", text);
 		collection.insertOne(doc);
 	}
+    /**
+     * A help method to get the review for the existing books
+     * @param isbn
+     * @return
+     * @throws IOException
+     * @throws SQLException
+     */
 	private ArrayList<Review> getBookReviews(String isbn) throws IOException, MongoException{
         ArrayList<Review> reviews = new ArrayList<Review>();
-        
+
         try{
     		MongoCollection<Document> coll = db.getCollection("review");
     		FindIterable<Document> docs = coll.find(eq("isbn",isbn));
@@ -201,6 +281,14 @@ public class MongoDB implements BooksDbInterface {
         }
         return reviews;
     }
+
+    /**
+     * a help method to get the averaged rating for books
+     * @param isbn
+     * @return
+     * @throws IOException
+     * @throws SQLException
+     */
 	private float getAvgRating(String isbn)throws IOException, MongoException{
         float avgRating = 0;
 
@@ -218,6 +306,12 @@ public class MongoDB implements BooksDbInterface {
         }
     }
 
+    /**
+     * Removes a book from the DB by its ISBN
+     * @param  isbn: the isbn number to be used
+     * @throws IOException
+     * @throws SQLException
+     */
 	@Override
 	public void removeBookByIsbn(String isbn) throws IOException, MongoException {
         MongoCollection<Document> coll = db.getCollection("book");
@@ -227,16 +321,33 @@ public class MongoDB implements BooksDbInterface {
 
 	}
 
+    /**
+     * Adds a new customer (who can rate add and delete books)
+     * @param name
+     * @param address
+     * @param userName
+     * @param password
+     * @throws IOException
+     * @throws SQLException
+     * @throws MongoException
+     */
 	@Override
-	public void addCustomer(String name, String address, String userName, String password)
-			throws IOException, MongoException {
+	public void addCustomer(String name, String address, String userName, String password) throws IOException, MongoException {
 
 		MongoCollection<Document> coll = db.getCollection("customer");
 		Document doc = new Document("name",name).append("password", password).append("userName", userName).append("adress", address);
 		coll.insertOne(doc);
-		
+
 	}
 
+    /**
+     * The log in method to handel the Customer log ins
+     * @param userName
+     * @param password
+     * @return
+     * @throws IOException
+     * @throws SQLException
+     */
 	@Override
 	public boolean loginAttempt(String userName, String password) throws IOException, MongoException {
 		boolean failOrAccept = false;
@@ -253,8 +364,12 @@ public class MongoDB implements BooksDbInterface {
         }
          System.out.println(customer);
          return failOrAccept;
-        
+
 	}
+
+    /**
+     * Disconects the current log in customer
+     */
 	@Override
 	public void logOut(){
 	    customer = null;

@@ -1,7 +1,7 @@
 package booksdbclient.model;
 
 import java.io.IOException;
-
+import java.sql.SQLException;
 import java.util.List;
 
 import com.mongodb.MongoException;
@@ -19,7 +19,7 @@ public interface BooksDbInterface {
      * @param database, userName, passWord
      * @return true on successful connection.
      */
-    public boolean connect(String database, String userName, String passWord) throws IOException, MongoException, MongoException;
+    public boolean connect(String database) throws IOException, MongoException, MongoException;
     /**
      * Disconnects from the database.
      */
