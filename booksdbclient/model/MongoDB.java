@@ -30,6 +30,7 @@ import java.util.Date;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Updates.set;
 
 
 public class MongoDB implements BooksDbInterface {
@@ -149,7 +150,7 @@ public class MongoDB implements BooksDbInterface {
             authors.add(author);
         }
 
-        Book book = new Book(isbn, title, genre,1,getBookReviews(isbn),1);
+        Book book = new Book(isbn, title, genre,getAvgRating(isbn),getBookReviews(isbn),1);
         book.setAuthors(authors);
         return book;
     }
