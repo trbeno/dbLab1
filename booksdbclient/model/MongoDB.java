@@ -1,36 +1,26 @@
 package booksdbclient.model;
-import java.io.IOException;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-
-
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.MongoException;
-
-
+import com.mongodb.*;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
-
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-
 import org.bson.Document;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.Block;
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Updates.set;
+import com.mongodb.BasicDBObject;
+import com.mongodb.MongoException;
+
 
 
 public class MongoDB implements BooksDbInterface {
@@ -39,18 +29,35 @@ public class MongoDB implements BooksDbInterface {
 	private Customer customer = null;
 	@Override
 	public boolean connect(String database, String userName, String passWord) throws IOException, SQLException, MongoException{
-		 // Creating a Mongo client 
-		MongoClientURI uri = new MongoClientURI("mongodb://libraryClient:terror@localhost:27017/?authSource=test");
-		MongoClient mongoClient = new MongoClient(uri);
-		db = mongoClient.getDatabase("library");  
+		 // Creating a Mongo client
+
+        MongoClientURI uri = new MongoClientURI("mongodb://libraryClient:pot@localhost:27017/?authSource=library");
+        mongo= new MongoClient(uri);
+        db = mongo.getDatabase("library");
+
+        //MongoCredential credential = MongoCredential.createCredential("libraryClient", "library","pot".toCharArray() );
+        //mongo = new MongoClient(new ServerAddress("localhost", 27017), Arrays.asList(credential));
+        //db = mongo.getDatabase("library");
+
+        //mongo = new MongoClient("127.0.0.1",27017);
+        //mongo = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
+		//db = mongo.getDatabase("library");
+
 		System.out.println("Connected to the database successfully");  
 		return true;
 	}
+	private Block<Document> printBlock = new Block<Document>() {
+        public void apply(final Document document) {
+			List<Book> result = new ArrayList<>();
+
+
+        }
+    };
 	@Override
 	public void disconnect() throws IOException, SQLException {
 		if(mongo!= null && db!= null) {
 			mongo.close();
-			
+
 		}
 	}
 
@@ -163,7 +170,7 @@ public class MongoDB implements BooksDbInterface {
             updateAuthorName = doc.getString("authorName");
         }
         updateAuthorName = updateAuthorName +", " +authorName;
-        
+
 	    coll.updateOne(eq("isbn",isbn),set("authorName",updateAuthorName));
 
 	}
