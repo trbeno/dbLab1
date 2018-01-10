@@ -18,7 +18,10 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 
 import org.bson.Document;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
@@ -97,10 +100,42 @@ public class MongoDB implements BooksDbInterface {
 	}
 
 	@Override
-	public void addReview(String isbn, String rating, String text) throws IOException, SQLException {
-		// TODO Auto-generated method stub
-		
+	public void addReview(String isbn, String rating, String text) throws IOException, SQLException, MongoException{
+		MongoCollection<Document> collection = db.getCollection("review");
+		java.util.Date utilDate = new Date();
+        java.sql.Date date = new java.sql.Date(utilDate.getTime());
+		Document doc = new Document("isbn",isbn).append("customerOID", customer.getCustomerOId()).append("rating", Integer.parseInt(rating)).append("date", date).append("text", text);
+		collection.insertOne(doc);
 	}
+	private ArrayList<Review> getBookReviews(String isbn) throws IOException, SQLException{
+        ArrayList<Review> reviews = new ArrayList<Review>();
+        
+        try{
+    		MongoCollection<Document> collection = db.getCollection("review");
+    		FindIterable<Document> docs = collection.find(eq("isbn",isbn));
+    		for(Document doc: docs) {
+    			String reviewerId = doc.getString("customerOID");
+    			Double rating =doc.getDouble("rating");
+    			Date date = doc.getDate("date");
+    			String review = doc.getString("text");
+    			reviews.add(new Review(review,rating.floatValue(),date,reviewerId));
+    		}
+        }finally {
+        }
+        return reviews;
+    }
+	private float getAvgRating(String isbn)throws IOException, SQLException{
+        float avgRating = 0;
+
+        try {
+            MongoCollection<Document> collection = db.getCollection("review");
+            //Document doc = collection.find();
+        	//String askForAvgRatingSQL = "SELECT AVG(rating) FROM t_review WHERE isbn = ?";
+        	
+        }finally {
+        }
+        return avgRating;
+    }
 
 	@Override
 	public void removeBookByIsbn(String isbn) throws IOException, SQLException {

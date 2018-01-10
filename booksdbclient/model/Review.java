@@ -4,14 +4,16 @@ import java.util.Date;
 
 public class Review {
 
+	private String reviewerId;
     private String review;
     private float rating;
     private Date date;
     
-    public Review(String review,float rating,Date date) {
+    public Review(String review,float rating,Date date,String reviewerId) {
         this.review = review;
         this.rating = rating;
         this.date = date;
+        this.reviewerId=reviewerId;
     }
 
     public float getRating() {
